@@ -35,7 +35,7 @@ public class FilmController {
     @PutMapping()
     public Film put(@RequestBody Film film) {
         if (validCheck(film)) {
-            if (films.containsKey(film.getId())){
+            if (films.containsKey(film.getId())) {
                 log.info("Обновляем фильм: " + film.toString());
                 films.put(film.getId(), film);
             } else {
@@ -48,19 +48,19 @@ public class FilmController {
     }
 
     private Boolean validCheck(Film film) {
-        if (film.getName().isBlank()){
+        if (film.getName().isBlank()) {
             log.info("название не может быть пустым: " + film.toString());
             throw new ValidationException("название не может быть пустым");
         }
-        if (film.getDescription().length() >= 200){
+        if (film.getDescription().length() >= 200) {
             log.info("максимальная длина описания — 200 символов: " + film.toString());
             throw new ValidationException("максимальная длина описания — 200 символов");
         }
-        if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))){
+        if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
             log.info("дата релиза — не раньше 28 декабря 1895 года: " + film.toString());
             throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года");
         }
-        if (film.getDuration() <= 0){
+        if (film.getDuration() <= 0) {
             log.info("продолжительность фильма должна быть положительной: " + film.toString());
             throw new ValidationException("продолжительность фильма должна быть положительной");
         }

@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping()
     public User create(@RequestBody User user) {
-        if (validCheck(user)){
+        if (validCheck(user)) {
             id++;
             user.setId(id);
             log.info("Сохраняем пользователя: " + user.toString());
@@ -38,7 +38,7 @@ public class UserController {
 
     @PutMapping()
     public User put(@RequestBody User user) {
-        if (validCheck(user)){
+        if (validCheck(user)) {
             if (users.containsKey(user.getId())) {
                 log.info("Обновляем пользователя: " + user.toString());
                 users.put(user.getId(), user);
@@ -51,28 +51,28 @@ public class UserController {
         return user;
     }
 
-    private Boolean validCheck(User user){
+    private Boolean validCheck(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             log.info("электронная почта не может быть пустой: " + user.toString());
             throw new ValidationException("электронная почта не может быть пустой");
         }
-        if (!user.getEmail().contains("@")){
+        if (!user.getEmail().contains("@")) {
             log.info("электронная почта должна содержать символ @: " + user.toString());
             throw new ValidationException("электронная почта должна содержать символ @");
         }
-        if (user.getLogin().isBlank()){
+        if (user.getLogin().isBlank()) {
             log.info("логин не может быть пустым: " + user.toString());
             throw new ValidationException("логин не может быть пустым");
         }
-        if (user.getLogin().contains(" ")){
+        if (user.getLogin().contains(" ")) {
             log.info("логин не может содержать пробелы: " + user.toString());
             throw new ValidationException("логин не может содержать пробелы");
         }
-        if (user.getBirthday().isAfter(LocalDate.now())){
+        if (user.getBirthday().isAfter(LocalDate.now())) {
             log.info("дата рождения не может быть в будущем: " + user.toString());
             throw new ValidationException("дата рождения не может быть в будущем");
         }
-        if (user.getName() == null || user.getName().isBlank()){
+        if (user.getName() == null || user.getName().isBlank()) {
             log.info("имя для отображения может быть пустым — в таком случае будет использован логин: " + user.toString());
             user.setName(user.getLogin());
         }
