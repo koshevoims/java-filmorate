@@ -5,6 +5,8 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -12,7 +14,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class Film {
-    private Integer id;
+    private long id;
     @NotEmpty(message = "Name cannot be empty")
     private String name;
     @Size(max = 200, message = "Description must be less than 200 characters")
@@ -22,4 +24,9 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Duration cannot be negative")
     private Integer duration;
+    private Set<Long> likes;
+
+    public Film() {
+        this.likes = new HashSet<>();
+    }
 }
