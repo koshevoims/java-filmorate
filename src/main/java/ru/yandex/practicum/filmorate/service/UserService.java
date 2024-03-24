@@ -19,7 +19,7 @@ public class UserService {
 
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
-        this.id = 1;
+        this.id = 0;
     }
 
     public List<User> getAll() {

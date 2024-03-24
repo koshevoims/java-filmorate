@@ -23,7 +23,7 @@ public class FilmService {
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
-        this.id = 1;
+        this.id = 0;
     }
 
     public List<Film> getAll() {
