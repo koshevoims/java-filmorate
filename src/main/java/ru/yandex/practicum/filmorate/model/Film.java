@@ -27,8 +27,11 @@ public class Film {
     private Integer duration;
     @JsonIgnore
     private Set<Long> likes;
+    private RatingMpa ratingMpa;
+    private final Set<Genre> genre;
 
     public Film() {
         this.likes = new HashSet<>();
+        this.genre = new HashSet<>();
     }
 }
