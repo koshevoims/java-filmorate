@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -31,7 +30,7 @@ class UserControllerTest {
 
     @Test
     void testUserCanNotEmptyLogin() {
-        User user = new User(0, "email@emil.ru", "", "", LocalDate.now().minusDays(1));
+        User user = new User(0, "email@emil.ru", "", "", LocalDate.now().minusDays(1), null);
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         for (ConstraintViolation<User> violation : violations) {
             log.error(violation.getMessage());
@@ -43,7 +42,7 @@ class UserControllerTest {
 
     @Test
     void testUserCanEmptyName() {
-        User user = new User(0, "email@emil.ru", "Lucky", "", LocalDate.now().minusDays(1));
+        User user = new User(0, "email@emil.ru", "Lucky", "", LocalDate.now().minusDays(1), null);
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         for (ConstraintViolation<User> violation : violations) {
             log.error(violation.getMessage());
@@ -53,7 +52,7 @@ class UserControllerTest {
 
     @Test
     void testUserCanNotEmptyEmail() {
-        User user = new User(0, "", "Lucky", "", LocalDate.now().minusDays(1));
+        User user = new User(0, "", "Lucky", "", LocalDate.now().minusDays(1), null);
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         for (ConstraintViolation<User> violation : violations) {
             log.error(violation.getMessage());
@@ -65,7 +64,7 @@ class UserControllerTest {
 
     @Test
     void testUserValidEmail() {
-        User user = new User(0, "jygjhgj", "Lucky", "", LocalDate.now().minusDays(1));
+        User user = new User(0, "jygjhgj", "Lucky", "", LocalDate.now().minusDays(1), null);
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         for (ConstraintViolation<User> violation : violations) {
             log.error(violation.getMessage());
@@ -77,7 +76,7 @@ class UserControllerTest {
 
     @Test
     void testUserCanNotNullBithday() {
-        User user = new User(0, "email@emil.ru", "Lucky", "", null);
+        User user = new User(0, "email@emil.ru", "Lucky", "", null, null);
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         for (ConstraintViolation<User> violation : violations) {
             log.error(violation.getMessage());
@@ -89,7 +88,7 @@ class UserControllerTest {
 
     @Test
     void testUserValidBithday() {
-        User user = new User(0, "email@emil.ru", "Lucky", "", LocalDate.now().plusDays(1));
+        User user = new User(0, "email@emil.ru", "Lucky", "", LocalDate.now().plusDays(1), null);
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         for (ConstraintViolation<User> violation : violations) {
             log.error(violation.getMessage());
@@ -101,7 +100,7 @@ class UserControllerTest {
 
     @Test
     void testUserCanNotNegativeDuration() {
-        User user = new User(0, "email@emil.ru", "Lucky", "", LocalDate.now().plusDays(1));
+        User user = new User(0, "email@emil.ru", "Lucky", "", LocalDate.now().plusDays(1), null);
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         for (ConstraintViolation<User> violation : violations) {
             log.error(violation.getMessage());
@@ -110,6 +109,4 @@ class UserControllerTest {
         Assertions.assertFalse(violations.isEmpty());
         Assertions.assertEquals(message.get(0), "Birthday cannot be in future");
     }
-
-
 }

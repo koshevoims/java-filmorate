@@ -29,7 +29,7 @@ class FilmControllerTest {
 
     @Test
     void testFilmCanNotEmptyName() {
-        Film film = new Film(0, "", "description", LocalDate.now().minusDays(1), 10);
+        Film film = new Film(0, "", "description", LocalDate.now().minusDays(1), 10, null);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         for (ConstraintViolation<Film> violation : violations) {
             log.error(violation.getMessage());
@@ -42,7 +42,7 @@ class FilmControllerTest {
     @Test
     void testFilmCanNotLongDescription() {
         Film film = new Film(0, "Terminator", "descriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescription",
-                LocalDate.now().minusDays(1), 10);
+                LocalDate.now().minusDays(1), 10, null);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         for (ConstraintViolation<Film> violation : violations) {
             log.error(violation.getMessage());
@@ -54,7 +54,7 @@ class FilmControllerTest {
 
     @Test
     void testFilmCanNotReleaseDate() {
-        Film film = new Film(0, "Terminator", "description", null, 10);
+        Film film = new Film(0, "Terminator", "description", null, 10, null);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         for (ConstraintViolation<Film> violation : violations) {
             log.error(violation.getMessage());
@@ -66,7 +66,7 @@ class FilmControllerTest {
 
     @Test
     void testFilmValidReleaseDate() {
-        Film film = new Film(0, "Terminator", "description", LocalDate.now().plusDays(1), 10);
+        Film film = new Film(0, "Terminator", "description", LocalDate.now().plusDays(1), 10, null);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         for (ConstraintViolation<Film> violation : violations) {
             log.error(violation.getMessage());
@@ -78,7 +78,7 @@ class FilmControllerTest {
 
     @Test
     void testFilmCanNotNegativeDuration() {
-        Film film = new Film(0, "Terminator", "description", LocalDate.now().minusDays(1), -10);
+        Film film = new Film(0, "Terminator", "description", LocalDate.now().minusDays(1), -10, null);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         for (ConstraintViolation<Film> violation : violations) {
             log.error(violation.getMessage());
