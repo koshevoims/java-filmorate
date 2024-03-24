@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Duration cannot be negative")
     private Integer duration;
+    @JsonIgnore
     private Set<Long> likes;
 
     public Film() {

@@ -3,17 +3,20 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
 @Component
 @AllArgsConstructor
 @Slf4j
+@Validated
 public class UserController {
     private final UserService userService;
 
@@ -26,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}") //TO DO - Validation ID
-    public User getId(@PathVariable Integer id) {
+    public User getId(@PathVariable @Positive Integer id) {
         log.info("Получили пользователя по id. Пользователь id: {}", id);
         User user = userService.getId(id);
         log.info("Возвращаем ответ. Пользователь : {}", user);
@@ -50,22 +53,22 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public User addFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         return userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
-    public User deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public User deleteFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         return userService.deleteFriend(id, friendId);
     }
 
     @GetMapping("/users/{id}/friends")
-    public List<User> getFriends(@PathVariable Long id) {
+    public List<User> getFriends(@PathVariable @Positive Long id) {
         return userService.getFriends(id);
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
-    public List<User> getSharedFriend(@PathVariable Long id, @PathVariable Long otherId) {
+    public List<User> getSharedFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long otherId) {
         return userService.getSharedFriends(id, otherId);
     }
 }

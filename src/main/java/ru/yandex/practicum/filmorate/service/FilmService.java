@@ -6,8 +6,6 @@ import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
@@ -22,14 +20,14 @@ public class FilmService {
     private final UserStorage userStorage;
     private long id;
 
-    public FilmService(InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
-        this.id = 0;
+        this.id = 1;
     }
 
     public List<Film> getAll() {
-        return List.copyOf(filmStorage.getAll());
+        return filmStorage.getAll();
     }
 
     public Film getId(long id) {
@@ -85,9 +83,6 @@ public class FilmService {
     }
 
     public List<Film> getTop(Integer count) {
-        if (count < 1) {
-            throw new ValidationException("GET popular: count must be greater than 0");
-        }
         return filmStorage.getAll().stream()
                 .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
                 .limit(count)

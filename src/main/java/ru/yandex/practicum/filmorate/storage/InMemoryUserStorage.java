@@ -21,7 +21,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getAll() {
-        return new ArrayList<>(users.values());
+        return List.copyOf(users.values());
     }
 
     @Override
