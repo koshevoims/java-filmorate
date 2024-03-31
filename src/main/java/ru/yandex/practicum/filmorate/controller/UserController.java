@@ -13,31 +13,32 @@ import java.util.*;
 
 @RestController
 @Slf4j
+@RequestMapping("/users")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @PostMapping("/users")
+    @PostMapping()
     public User addUser(@Valid @RequestBody User user) {
-        log.info("Добавление пользователя " + user.getName());
+        log.info("Добавление пользователя {}", user.getName());
         userService.addUser(user);
         log.info("Пользователь добавлен");
         return user;
     }
 
-    @PutMapping("/users")
+    @PutMapping()
     public User updateUser(@Valid @RequestBody User user) throws UserNotFoundException {
-        log.info("Обновление данных пользователя " + user.getName());
+        log.info("Обновление данных пользователя {}", user.getName());
         userService.updateUser(user);
         log.info("Данные пользователя обновлены");
         return user;
     }
 
-    @GetMapping("/users")
+    @GetMapping()
     public List<User> getAllUsers() {
         log.info("Запрос на получение списка всех пользователей");
         List<User> users = userService.getAllUsers();
@@ -45,55 +46,55 @@ public class UserController {
         return users;
     }
 
-    @DeleteMapping("/users")
+    @DeleteMapping()
     public User deleteUser(long userId) {
-        log.info("Удаление пользователя с id " + userId);
+        log.info("Удаление пользователя с id: {}", userId);
         User userToDelete = userService.deleteUser(userId);
         log.info("Пользователь удален");
         return userToDelete;
     }
 
-    @GetMapping("users/{userId}")
+    @GetMapping("/{userId}")
     public User getUserById(@PathVariable long userId) throws UserNotFoundException {
-        log.info("Запрос на получение пользователя с id " + userId);
+        log.info("Запрос на получение пользователя с id: {}", userId);
         User user = userService.getUserById(userId);
         log.info("Пользователь с указанным id получен клиентом");
         return user;
     }
 
-    @PutMapping("/users/{userId}/friends/{friendId}")
+    @PutMapping("/{userId}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
     public void addFriend(@PathVariable Long userId,
                           @PathVariable Long friendId) throws UserNotFoundException {
-        log.info("Пользователь " + userId + " добавляет в друзья " + friendId);
+        log.info("Пользователь {} добавляет в друзья {}", userId, friendId);
         User friend = userService.getUserById(friendId);
         userService.addFriend(userId, friendId);
         log.info("Добавление в друзья произошло успешно");
     }
 
-    @DeleteMapping("/users/{userId}/friends/{friendId}")
+    @DeleteMapping("/{userId}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteFriend(@PathVariable Long userId,
                              @PathVariable Long friendId) throws UserNotFoundException {
-        log.info("Запрос на удаление друга " + friendId + " пользователем " + userId);
+        log.info("Запрос на удаление друга {} пользователем {}", friendId, userId);
         userService.deleteFriend(userId, friendId);
-        log.info("Пользователь " + friendId + " удален из списка друзей " + userId);
+        log.info("Пользователь {} удален из списка друзей {}", friendId, userId);
     }
 
-    @GetMapping("/users/{userId}/friends")
+    @GetMapping("/{userId}/friends")
     public List<User> getAllUsersFriends(@PathVariable Long userId) throws UserNotFoundException {
-        log.info("Запрашивается список друзей пользователя " + userId);
+        log.info("Запрашивается список друзей пользователя {}", userId);
         List<User> users = userService.getUsersFriends(userId);
-        log.info("Список друзей пользователя " + userId + " получен");
+        log.info("Список друзей пользователя {} получен", userId);
         return users;
     }
 
-    @GetMapping("/users/{userId}/friends/common/{friendId}")
+    @GetMapping("/{userId}/friends/common/{friendId}")
     public List<User> getMutualFriends(@PathVariable Long userId,
                                        @PathVariable Long friendId) throws UserNotFoundException {
-        log.info("Запрос на получение списка общих друзей пользователей " + userId + " и " + friendId);
+        log.info("Запрос на получение списка общих друзей пользователей {} и {}", userId, friendId);
         List<User> userList = userService.getMutualFriends(userId, friendId);
-        log.info("Список общих друзей пользователей " + userId + " и " + friendId + " получен клиентом");
+        log.info("Список общих друзей пользователей {} и {} получен клиентом", friendId, userId);
         return userList;
     }
 }

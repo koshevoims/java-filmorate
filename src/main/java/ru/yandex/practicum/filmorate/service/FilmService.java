@@ -15,8 +15,6 @@ public interface FilmService {
     void deleteLike(Long filmId, Long userId);
 
     List<Film> getTopRatedFilms(Integer count);
-
-
     public Film addFilm(Film film) throws MpaNotFoundException, IncorrectMpaException, IncorrectGenreException;
 
     public Film updateFilm(Film film) throws FilmNotFoundException;

@@ -14,6 +14,7 @@ import java.util.*;
 
 @RestController
 @Slf4j
+@RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
 
@@ -22,24 +23,24 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    @PostMapping("/films")
+    @PostMapping()
     public Film addFilm(@Valid @RequestBody Film film)
             throws MpaNotFoundException, IncorrectMpaException, IncorrectGenreException {
-        log.info("Добавляю фильм " + film.getName());
+        log.info("Добавляю фильм: {}", film.getName());
         filmService.addFilm(film);
-        log.info("Фильм " + film.getName() + " добавлен; его id: " + film.getId());
+        log.info("Фильм {} добавлен; его id: {} ", film.getName(), film.getId());
         return film;
     }
 
-    @PutMapping("/films")
+    @PutMapping()
     public Film updateFilm(@Valid @RequestBody Film film) throws FilmNotFoundException {
-        log.info("Обновляю информацию о фильме " + film.getName());
+        log.info("Обновляю информацию о фильме: {} ", film.getName());
         filmService.updateFilm(film);
         log.info("Информация о фильме обновлена");
         return film;
     }
 
-    @GetMapping("/films")
+    @GetMapping()
     public List<Film> getAllFilms() {
         log.info("Вывожу список всех фильмов");
         List<Film> allFilms = filmService.getAllFilms();
@@ -47,44 +48,43 @@ public class FilmController {
         return allFilms;
     }
 
-    @DeleteMapping("/films")
+    @DeleteMapping()
     @ResponseStatus(HttpStatus.OK)
     public void deleteFilm(long filmId) {
-        log.info("Удаляю фильм с идентификатором " + filmId);
+        log.info("Удаляю фильм с идентификатором: {}", filmId);
         filmService.deleteFilm(filmId);
-        log.info("Фильм с id " + filmId + " удалён");
+        log.info("Фильм с id {} удалён", filmId);
     }
 
-    @GetMapping("/films/{filmId}")
+    @GetMapping("/{filmId}")
     public Film getFilmById(@PathVariable long filmId) throws FilmNotFoundException {
-        log.info("Получаю фильм по идентификатору " + filmId);
+        log.info("Получаю фильм по идентификатору: {}", filmId);
         Film film = filmService.getFilmById(filmId);
         log.info("Фильм с указанным идентификатором получен");
         return film;
     }
 
-    @PutMapping("/films/{filmId}/like/{userId}")
+    @PutMapping("/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public void setLike(@PathVariable Long filmId, @PathVariable Long userId) {
         filmService.addLike(filmId, userId);
-        log.info("Пользователь " + userId + " поставил отметку like фильму " + filmId);
+        log.info("Пользователь {} поставил отметку like фильму: {}", userId, filmId);
     }
 
-    @DeleteMapping("/films/{filmId}/like/{userId}")
+    @DeleteMapping("/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteLike(@PathVariable Long filmId, @PathVariable Long userId) throws FilmNotFoundException,
-            UserNotFoundException {
-        Film film = filmService.getFilmById(filmId);
+    public void deleteLike(@PathVariable Long filmId, @PathVariable Long userId) throws FilmNotFoundException {
+        filmService.getFilmById(filmId);
         filmService.deleteLike(filmId, userId);
-        log.info("Пользователь " + userId + " убрал отметку like с фильма " + filmId);
+        log.info("Пользователь {} убрал отметку like с фильма {}", userId, filmId);
     }
 
-    @GetMapping("/films/popular")
+    @GetMapping("/popular")
     public List<Film> getTopRatedFilms(@RequestParam(required = false) Integer count) {
-        log.info("Получен запрос на составление списка " + count + " самых оцениваемых фильмов");
-        List<Film> topRatedFims = filmService.getTopRatedFilms(count);
+        log.info("Получен запрос на составление списка {} самых оцениваемых фильмов", count);
+        List<Film> topRatedFilms = filmService.getTopRatedFilms(count);
         log.info("Список фильмов с наибольшим количеством оценок получен");
-        return topRatedFims;
+        return topRatedFilms;
     }
 
 }

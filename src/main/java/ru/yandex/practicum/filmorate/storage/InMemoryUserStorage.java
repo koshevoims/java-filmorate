@@ -11,7 +11,7 @@ import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private HashMap<Long, User> users = new HashMap<>();
+    private final HashMap<Long, User> users = new HashMap<>();
     private long maxId;
 
     @Override
@@ -26,8 +26,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User deleteUser(long userId) {
-        User userToDelete = users.remove(userId);
-        return userToDelete;
+        return users.remove(userId);
     }
 
     @Override
@@ -46,8 +45,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getAllUsers() {
-        List<User> resultList = new ArrayList<>(users.values());
-        return resultList;
+        return new ArrayList<>(users.values());
     }
 
     @Override

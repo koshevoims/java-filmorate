@@ -20,7 +20,7 @@ import java.util.*;
 public class BaseFilmService implements FilmService {
 
     @Autowired
-    @Qualifier("userService")
+    @Qualifier("userStorage")
     private UserStorage userStorage;
 
     @Autowired
@@ -59,8 +59,8 @@ public class BaseFilmService implements FilmService {
     }
 
     public Film updateFilm(Film film) throws FilmNotFoundException {
-        filmStorage.updateFilm(film).orElseThrow(() -> new FilmNotFoundException("Фильм с id " + film.getId() + " " +
-                "не найден"));
+        filmStorage.updateFilm(film).orElseThrow(() -> new FilmNotFoundException("Фильм с id " + film.getId() + " "
+                + "не найден"));
         return film;
     }
 

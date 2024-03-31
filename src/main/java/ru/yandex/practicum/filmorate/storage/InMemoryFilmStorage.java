@@ -24,8 +24,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film deleteFilm(long filmId) {
-        Film filmToDelete = films.remove(filmId);
-        return filmToDelete;
+        return films.remove(filmId);
     }
 
     @Override
@@ -44,8 +43,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
-        List<Film> resultList = new ArrayList<>(films.values());
-        return resultList;
+        return new ArrayList<>(films.values());
     }
 
     @Override
@@ -61,7 +59,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         resultList.sort((o1, o2) -> o2.getLikes().size() - o1.getLikes().size());
         if (count > resultList.size()) {
             return resultList;
-        } else return resultList.subList(0, count);
+        }
+        return resultList.subList(0, count);
     }
 
     @Override

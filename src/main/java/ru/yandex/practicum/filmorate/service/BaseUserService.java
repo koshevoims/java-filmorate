@@ -18,18 +18,18 @@ public class BaseUserService implements UserService {
 
     @Override
     public void addFriend(Long userId1, Long userId2) throws UserNotFoundException {
-        User user = userStorage.getUserById(userId1)
+        userStorage.getUserById(userId1)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        User friend = userStorage.getUserById(userId2)
+        userStorage.getUserById(userId2)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         userStorage.addFriend(userId1, userId2);
     }
 
     @Override
     public void deleteFriend(Long userId1, Long userId2) throws UserNotFoundException {
-        User user = userStorage.getUserById(userId1)
+        userStorage.getUserById(userId1)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        User friend = userStorage.getUserById(userId2)
+        userStorage.getUserById(userId2)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         userStorage.deleteFriend(userId1, userId2);
     }
@@ -41,7 +41,7 @@ public class BaseUserService implements UserService {
 
     @Override
     public List<User> getUsersFriends(Long userId) throws UserNotFoundException {
-        User user = userStorage.getUserById(userId)
+        userStorage.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
 
         return userStorage.getFriends(userId);

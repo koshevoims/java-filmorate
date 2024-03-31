@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@RequestMapping("/mpa")
 public class MpaController {
     private final MpaService mpaService;
 
@@ -22,7 +24,7 @@ public class MpaController {
         this.mpaService = mpaService;
     }
 
-    @GetMapping("/mpa")
+    @GetMapping()
     public List<RatingMpa> getAll() {
         log.info("Получен запрос на вывод всех MPA-рейтингов");
         List<RatingMpa> allMpas = mpaService.getAllMpa();
@@ -30,12 +32,12 @@ public class MpaController {
         return allMpas;
     }
 
-    @GetMapping("/mpa/{mpaId}")
+    @GetMapping("/{mpaId}")
     public RatingMpa getById(@PathVariable int mpaId) throws MpaNotFoundException {
-        log.info("Поиск MPA-рейтинга по идентификатору " + mpaId);
+        log.info("Поиск MPA-рейтинга по идентификатору {}", mpaId);
         try {
             RatingMpa mpa = mpaService.getMpaById(mpaId).get();
-            log.info("Mpa-рейтинг по идентификатору " + mpaId + " получен! Это " + mpa.getName());
+            log.info("Mpa-рейтинг по идентификатору {} получен! Это {}", mpaId, mpa.getName());
             return mpa;
         } catch (EmptyResultDataAccessException e) {
             throw new MpaNotFoundException("Рейтинг с указанным в запросе id не найден");

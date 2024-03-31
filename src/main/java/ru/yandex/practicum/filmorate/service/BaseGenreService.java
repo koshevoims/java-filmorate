@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class BaseGenreService implements GenreService {
 
-    private GenreStorage genreStorage;
+    private final GenreStorage genreStorage;
 
     @Autowired
     public BaseGenreService(GenreStorage genreStorage) {
