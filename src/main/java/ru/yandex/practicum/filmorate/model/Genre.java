@@ -1,14 +1,20 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-public enum Genre {
-    COMEDY("Комедия"),
-    DRAMA("Драма"),
-    CARTOON("Мультфильм"),
-    THRILLER("Триллер"),
-    DOCUMENTARY("Документальный"),
-    ACTION("Боевик");
-    private final String description;
+import javax.persistence.OneToMany;
+
+@Component
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+@ToString
+public class Genre {
+    @OneToMany(mappedBy = "GENRES")
+    private int id;
+    private String name;
 }

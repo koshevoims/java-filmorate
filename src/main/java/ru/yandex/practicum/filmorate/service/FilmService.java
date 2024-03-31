@@ -1,95 +1,29 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.IncorrectGenreException;
+import ru.yandex.practicum.filmorate.exception.IncorrectMpaException;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.time.LocalDate;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Service
-@Slf4j
-public class FilmService {
+public interface FilmService {
+    void addLike(Long filmId, Long userId);
 
-    private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
-    private long id;
+    void deleteLike(Long filmId, Long userId);
 
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-        this.id = 0;
-    }
+    List<Film> getTopRatedFilms(Integer count);
 
-    public List<Film> getAll() {
-        return filmStorage.getAll();
-    }
 
-    public Film getById(long id) {
-        log.info("Получили запрос. Фильм id: {}", id);
-        return filmStorage.getById(id);
-    }
+    public Film addFilm(Film film) throws MpaNotFoundException, IncorrectMpaException, IncorrectGenreException;
 
-    public Film create(Film film) {
-        if (!validCheck(film)) {
-            log.error("дата релиза — не раньше 28 декабря 1895 года: {}", film.toString());
-            throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года");
-        }
-        film.setId(++id);
-        log.info("Сохраняем фильм: {}", film.toString());
-        filmStorage.save(film);
-        return film;
-    }
+    public Film updateFilm(Film film) throws FilmNotFoundException;
 
-    public Film change(Film film) {
-        if (!validCheck(film)) {
-            log.error("дата релиза — не раньше 28 декабря 1895 года: {}", film.toString());
-            throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года");
-        }
-        var oldFilm = filmStorage.getById(film.getId());
-        log.info("Обновляем фильм: {}", film.toString());
-        if (oldFilm == null) {
-            log.error("Фильм не существует: {}", film.toString());
-            throw new ObjectNotFoundException(String.format("POST /films: Фильм не существует id %d not found ", film.getId()));
-        }
-        return filmStorage.save(film);
-    }
+    public List<Film> getAllFilms();
 
-    public Film addLike(long id, long userId) {
-        var film = filmStorage.getById(id);
-        if (film == null) {
-            throw new ObjectNotFoundException(String.format("PUT like: film id %d не найден", id));
-        }
-        var user = userStorage.getById(userId);
-        if (user == null) {
-            throw new ObjectNotFoundException(String.format("PUT like: user id %d не найден", userId));
-        }
-        film.getLikes().add(userId);
-        return null;
-    }
+    public Film deleteFilm(long filmId);
 
-    public Film deleteLike(long id, long userId) {
-        var film = filmStorage.getById(id);
-        if (film == null) {
-            throw new ObjectNotFoundException(String.format("PUT like: film id %d not found", id));
-        }
-        film.getLikes().remove(userId);
-        return film;
-    }
-
-    public List<Film> getTop(Integer count) {
-        return filmStorage.getAll().stream()
-                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
-                .limit(count)
-                .collect(Collectors.toList());
-    }
-
-    private Boolean validCheck(Film film) {
-        return !film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"));
-    }
+    public Film getFilmById(long filmId) throws FilmNotFoundException;
 }
