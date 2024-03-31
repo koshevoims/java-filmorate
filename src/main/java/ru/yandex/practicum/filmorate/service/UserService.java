@@ -26,8 +26,8 @@ public class UserService {
         return userStorage.getAll();
     }
 
-    public User getId(long id) {
-        return userStorage.getId(id);
+    public User getById(long id) {
+        return userStorage.getById(id);
     }
 
     public User create(User user) {
@@ -43,7 +43,7 @@ public class UserService {
         if (!validCheck(user)) {
             throw new ValidationException("POST /users: логин не может содержать пробелы");
         }
-        var oldUser = userStorage.getId(user.getId());
+        var oldUser = userStorage.getById(user.getId());
         if (oldUser == null) {
             throw new ObjectNotFoundException(String.format("PUT /users: Пользователь с id %d  не найден", user.getId()));
         }
@@ -54,11 +54,11 @@ public class UserService {
         if (id.equals(friendId)) {
             throw new ValidationException("PUT friends: id одинаковые");
         }
-        var user = userStorage.getId(id);
+        var user = userStorage.getById(id);
         if (user == null) {
             throw new ObjectNotFoundException(String.format("PUT friends: Пользователь id %d не найден", id));
         }
-        var friend = userStorage.getId(friendId);
+        var friend = userStorage.getById(friendId);
         if (friend == null) {
             throw new ObjectNotFoundException(String.format("PUT friends: friend id %d не найден", friendId));
         }
@@ -71,11 +71,11 @@ public class UserService {
         if (id.equals(friendId)) {
             throw new ValidationException("DELETE friends: id одинаковые");
         }
-        var user = userStorage.getId(id);
+        var user = userStorage.getById(id);
         if (user == null) {
             throw new ObjectNotFoundException(String.format("DELETE friends: user id %d не найден", id));
         }
-        var friend = userStorage.getId(friendId);
+        var friend = userStorage.getById(friendId);
         if (friend == null) {
             throw new ObjectNotFoundException(String.format("DELETE friends: friend id %d не найден", friendId));
         }
@@ -85,23 +85,23 @@ public class UserService {
     }
 
     public List<User> getFriends(Long id) {
-        var user = userStorage.getId(id);
+        var user = userStorage.getById(id);
         if (user == null) {
             throw new ObjectNotFoundException(String.format("DELETE friends: user id %d not found", id));
         }
         List<User> friends = new ArrayList<>();
         for (var friendId: user.getFriends()) {
-            friends.add(userStorage.getId(friendId));
+            friends.add(userStorage.getById(friendId));
         }
         return friends;
     }
 
     public List<User> getSharedFriends(Long id, Long otherId) {
-        var user = userStorage.getId(id);
+        var user = userStorage.getById(id);
         if (user == null) {
             throw new ObjectNotFoundException(String.format("DELETE friends: user id %d не найден", id));
         }
-        var otherUser = userStorage.getId(otherId);
+        var otherUser = userStorage.getById(otherId);
         if (otherUser == null) {
             throw new ObjectNotFoundException(String.format("DELETE friends: other id %d не найден", id));
         }
@@ -109,7 +109,7 @@ public class UserService {
         commonIds.retainAll(otherUser.getFriends());
         List<User> commonFriends = new ArrayList<>();
         for (var friendId: commonIds) {
-            commonFriends.add(userStorage.getId(friendId));
+            commonFriends.add(userStorage.getById(friendId));
         }
         return commonFriends;
     }

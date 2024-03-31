@@ -9,5 +9,5 @@ public interface UserStorage {
 
     List<User> getAll();
 
-    User getId(Long id);
+    User getById(Long id);
 }

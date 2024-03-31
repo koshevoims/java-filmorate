@@ -17,10 +17,11 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 @Validated
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping()
     public List<User> getAll() {
         log.info("Получить всех пользователей. Количество пользователей");
         List<User> users = userService.getAll();
@@ -28,15 +29,15 @@ public class UserController {
         return users;
     }
 
-    @GetMapping("/users/{id}") //TO DO - Validation ID
-    public User getId(@PathVariable @Positive Integer id) {
+    @GetMapping("/{id}") //TO DO - Validation ID
+    public User getById(@PathVariable @Positive Integer id) {
         log.info("Получили пользователя по id. Пользователь id: {}", id);
-        User user = userService.getId(id);
+        User user = userService.getById(id);
         log.info("Возвращаем ответ. Пользователь : {}", user);
         return user;
     }
 
-    @PostMapping("/users")
+    @PostMapping()
     public User create(@Valid @RequestBody User user) {
         log.info("Создаем нового  пользователя {}", user);
         User createdUser = userService.create(user);
@@ -44,7 +45,7 @@ public class UserController {
         return createdUser;
     }
 
-    @PutMapping("/users")
+    @PutMapping()
     public User change(@Valid @RequestBody User user) {
         log.info("Изменить пользователя {}", user);
         User savedUser = userService.change(user);
@@ -52,22 +53,22 @@ public class UserController {
         return savedUser;
     }
 
-    @PutMapping("/users/{id}/friends/{friendId}")
+    @PutMapping("/{id}/friends/{friendId}")
     public User addFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         return userService.addFriend(id, friendId);
     }
 
-    @DeleteMapping("/users/{id}/friends/{friendId}")
+    @DeleteMapping("/{id}/friends/{friendId}")
     public User deleteFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         return userService.deleteFriend(id, friendId);
     }
 
-    @GetMapping("/users/{id}/friends")
+    @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable @Positive Long id) {
         return userService.getFriends(id);
     }
 
-    @GetMapping("/users/{id}/friends/common/{otherId}")
+    @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getSharedFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long otherId) {
         return userService.getSharedFriends(id, otherId);
     }

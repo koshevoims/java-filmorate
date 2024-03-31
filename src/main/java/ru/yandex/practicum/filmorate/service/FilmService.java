@@ -30,9 +30,9 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
-    public Film getId(long id) {
+    public Film getById(long id) {
         log.info("Получили запрос. Фильм id: {}", id);
-        return filmStorage.getId(id);
+        return filmStorage.getById(id);
     }
 
     public Film create(Film film) {
@@ -51,7 +51,7 @@ public class FilmService {
             log.error("дата релиза — не раньше 28 декабря 1895 года: {}", film.toString());
             throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года");
         }
-        var oldFilm = filmStorage.getId(film.getId());
+        var oldFilm = filmStorage.getById(film.getId());
         log.info("Обновляем фильм: {}", film.toString());
         if (oldFilm == null) {
             log.error("Фильм не существует: {}", film.toString());
@@ -61,11 +61,11 @@ public class FilmService {
     }
 
     public Film addLike(long id, long userId) {
-        var film = filmStorage.getId(id);
+        var film = filmStorage.getById(id);
         if (film == null) {
             throw new ObjectNotFoundException(String.format("PUT like: film id %d не найден", id));
         }
-        var user = userStorage.getId(userId);
+        var user = userStorage.getById(userId);
         if (user == null) {
             throw new ObjectNotFoundException(String.format("PUT like: user id %d не найден", userId));
         }
@@ -74,7 +74,7 @@ public class FilmService {
     }
 
     public Film deleteLike(long id, long userId) {
-        var film = filmStorage.getId(id);
+        var film = filmStorage.getById(id);
         if (film == null) {
             throw new ObjectNotFoundException(String.format("PUT like: film id %d not found", id));
         }

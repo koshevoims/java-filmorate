@@ -17,10 +17,11 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 @Validated
+@RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
 
-    @GetMapping("/films")
+    @GetMapping()
     public List<Film> getAll() {
         log.info("Получили запрос. Количество фильмов:");
         List<Film> films = filmService.getAll();
@@ -28,15 +29,15 @@ public class FilmController {
         return films;
     }
 
-    @GetMapping("/films/{id}")
-    public Film getId(@PathVariable @Positive Integer id) {
+    @GetMapping("/{id}")
+    public Film getById(@PathVariable @Positive Integer id) {
         log.info("Получили запрос. Фильм id: {}", id);
-        Film film = filmService.getId(id);
+        Film film = filmService.getById(id);
         log.info("Возвращаем ответ. Фильм: {}", film);
         return film;
     }
 
-    @PostMapping("/films")
+    @PostMapping()
     public Film create(@Valid @RequestBody Film film) {
         log.info("Создаем новый фильм: {}", film);
         Film savedFilm = filmService.create(film);
@@ -44,7 +45,7 @@ public class FilmController {
         return savedFilm;
     }
 
-    @PutMapping("/films")
+    @PutMapping()
     public Film change(@Valid @RequestBody Film film) {
         log.info("Получили запрос. Фильм: {}", film);
         Film changedFilm = filmService.change(film);
@@ -52,7 +53,7 @@ public class FilmController {
         return changedFilm;
     }
 
-    @PutMapping("/films/{id}/like/{userId}")
+    @PutMapping("/{id}/like/{userId}")
     public Film addLike(@PathVariable @Positive long id, @PathVariable @Positive long userId) {
         log.info("Поставить Like фильму: ");
         Film likedFilm = filmService.addLike(id, userId);
@@ -60,7 +61,7 @@ public class FilmController {
         return likedFilm;
     }
 
-    @DeleteMapping("/films/{id}/like/{userId}")
+    @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLike(@PathVariable @Positive long id, @PathVariable @Positive long userId) {
         log.info("Убрать Like фильму: ");
         Film unlikedFilm = filmService.deleteLike(id, userId);
@@ -68,7 +69,7 @@ public class FilmController {
         return unlikedFilm;
     }
 
-    @GetMapping("/films/popular")
+    @GetMapping("/popular")
     public List<Film> getTop(@RequestParam(defaultValue = "10") @Positive final Integer count) {
         log.info("Показать топ: ");
         List<Film> top = filmService.getTop(count);
