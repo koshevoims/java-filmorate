@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.exception.IncorrectMpaException;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import ru.yandex.practicum.filmorate.service.LikeService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -44,11 +43,7 @@ public class BaseFilmService implements FilmService {
     @Override
     public List<Film> getTopRatedFilms(Integer count) {
         List<Film> resultList;
-        if (Optional.ofNullable(count).isEmpty()) {
-            resultList = filmStorage.getTopRatedFilms();
-        } else {
-            resultList = filmStorage.getTopRatedFilms(count);
-        }
+        resultList = filmStorage.getTopRatedFilms(count);
         return resultList;
     }
 

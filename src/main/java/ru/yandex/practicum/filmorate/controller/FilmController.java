@@ -80,12 +80,10 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getTopRatedFilms(@RequestParam(required = false) Integer count) {
+    public List<Film> getTopRatedFilms(@RequestParam(required = false, defaultValue = "10") Integer count) {
         log.info("Получен запрос на составление списка {} самых оцениваемых фильмов", count);
         List<Film> topRatedFilms = filmService.getTopRatedFilms(count);
         log.info("Список фильмов с наибольшим количеством оценок получен");
         return topRatedFilms;
     }
-
 }
-

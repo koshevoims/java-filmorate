@@ -63,14 +63,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         return resultList.subList(0, count);
     }
 
-    @Override
-    public List<Film> getTopRatedFilms() {
-        List<Film> resultList = new ArrayList<>(films.values());
-        resultList.sort((o1, o2) -> o2.getLikes().size() - o1.getLikes().size());
-        return resultList.subList(0, 10);
-    }
-
-
     private long generateId() {
         return ++maxId;
     }

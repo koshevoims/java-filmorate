@@ -104,14 +104,6 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
         return   jdbcTemplate.query(sqlQuery, this::mapRow, count);
     }
 
-
-    @Override
-    public List<Film> getTopRatedFilms() {
-        String sqlQuery = "select FILMS.* from FILMS inner join LIKES on FILMS.FILM_ID = LIKES.FILM_ID "
-                + "group by FILMS.FILM_ID order by count(LIKES.FILM_ID) desc limit 10";
-        return   jdbcTemplate.query(sqlQuery, this::mapRow);
-    }
-
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
         Film film = Film.builder()
