@@ -1,13 +1,15 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exception.IncorrectGenreException;
 import ru.yandex.practicum.filmorate.exception.IncorrectMpaException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -21,7 +23,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@Component("filmStorage")
 @Repository
 public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
 
@@ -53,7 +54,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
             }
         }
         film.setId(simpleJdbcInsert.executeAndReturnKey(film.toMap()).longValue());
-        film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()).get());
+        film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
         for (Genre genre : film.getGenres()) {
             String sqlQuery = "insert into FILMGENRE(FILM_ID, GENRE_ID) values(?, ?)";
             jdbcTemplate.update(sqlQuery, film.getId(), genre.getId());
@@ -63,10 +64,9 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
     }
 
     @Override
-    public Film deleteFilm(long filmId) {
+    public void deleteFilm(long filmId) {
         String sqlQuery = "delete from FILMS where FILM_ID = ?";
         jdbcTemplate.update(sqlQuery, filmId);
-        return null;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
                 film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId(), film.getId());
         if (updateCount != 0) {
-            film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()).get());
+            film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
             return Optional.of(film);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Фильм не найден");
@@ -91,10 +91,14 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
     }
 
     @Override
-    public Optional<Film> getFilmById(long filmId) {
-        String sqlQuery = "select FILM_ID, FILM_TITLE, FILM_DESCRIPTION, FILM_RELEASE_DATE, FILM_DURATION,"
-                + "FILM_MPA_ID from FILMS where FILM_ID = ?";
-        return Optional.of(jdbcTemplate.queryForObject(sqlQuery, this::mapRow, filmId));
+    public Film getFilmById(long filmId) throws FilmNotFoundException {
+        try {
+            String sqlQuery = "select FILM_ID, FILM_TITLE, FILM_DESCRIPTION, FILM_RELEASE_DATE, FILM_DURATION,"
+                    + "FILM_MPA_ID from FILMS where FILM_ID = ?";
+            return jdbcTemplate.queryForObject(sqlQuery, this::mapRow, filmId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new FilmNotFoundException("Фильм не найден");
+        }
     }
 
     @Override
@@ -112,7 +116,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
                 .description(rs.getString(3))
                 .releaseDate(rs.getDate(4).toLocalDate())
                 .duration(rs.getLong(5))
-                .mpa(mpaStorage.getMpaById(rs.getInt(6)).get())
+                .mpa(mpaStorage.getMpaById(rs.getInt(6)))
                 .build();
         List<Genre> genres = genreStorage.getGenresByFilmId(film.getId());
         String likesQuery = "select USER_ID from LIKES join FILMS on LIKES.FILM_ID = FILMS.FILM_ID"

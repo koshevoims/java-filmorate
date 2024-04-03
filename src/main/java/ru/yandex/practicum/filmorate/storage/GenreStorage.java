@@ -13,7 +13,7 @@ public interface GenreStorage {
 
     public List<Genre> getAllGenres();
 
-    public Genre deleteGenre(int genreId);
+    public void deleteGenre(int genreId);
 
     public Optional<Genre> getGenreById(int genreId);
 

@@ -13,24 +13,20 @@ import java.util.List;
 public class BaseUserService implements UserService {
 
     @Autowired
-    @Qualifier("userStorage")
+    @Qualifier("userDbStorage")
     private UserStorage userStorage;
 
     @Override
     public void addFriend(Long userId1, Long userId2) throws UserNotFoundException {
-        userStorage.getUserById(userId1)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        userStorage.getUserById(userId2)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+        userStorage.getUserById(userId1);
+        userStorage.getUserById(userId2);
         userStorage.addFriend(userId1, userId2);
     }
 
     @Override
     public void deleteFriend(Long userId1, Long userId2) throws UserNotFoundException {
-        userStorage.getUserById(userId1)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        userStorage.getUserById(userId2)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+        userStorage.getUserById(userId1);
+        userStorage.getUserById(userId2);
         userStorage.deleteFriend(userId1, userId2);
     }
 
@@ -41,9 +37,7 @@ public class BaseUserService implements UserService {
 
     @Override
     public List<User> getUsersFriends(Long userId) throws UserNotFoundException {
-        userStorage.getUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-
+        userStorage.getUserById(userId);
         return userStorage.getFriends(userId);
     }
 
@@ -70,8 +64,7 @@ public class BaseUserService implements UserService {
     }
 
     @Override
-    public User getUserById(long userId) throws UserNotFoundException {
-        return userStorage.getUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + userId + " не найден"));
+    public User getUserById(long userId) {
+        return userStorage.getUserById(userId);
     }
 }

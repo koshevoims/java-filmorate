@@ -1,17 +1,18 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @Repository
@@ -51,9 +52,13 @@ public class MpaDbStorage implements MpaStorage, RowMapper<RatingMpa> {
     }
 
     @Override
-    public Optional<RatingMpa> getMpaById(int mpaId) {
-        String sqlQuery = "select MPA_ID, MPA_NAME from RATINGMPA where MPA_ID = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sqlQuery, this::mapRow, mpaId));
+    public RatingMpa getMpaById(int mpaId) throws MpaNotFoundException {
+        try {
+            String sqlQuery = "select MPA_ID, MPA_NAME from RATINGMPA where MPA_ID = ?";
+            return jdbcTemplate.queryForObject(sqlQuery, this::mapRow, mpaId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new MpaNotFoundException("Mpa не найден");
+        }
     }
 
     @Override

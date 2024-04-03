@@ -34,8 +34,8 @@ public class BaseGenreService implements GenreService {
     }
 
     @Override
-    public Genre deleteGenre(int genreId) {
-        return genreStorage.deleteGenre(genreId);
+    public void deleteGenre(int genreId) {
+        genreStorage.deleteGenre(genreId);
     }
 
     @Override

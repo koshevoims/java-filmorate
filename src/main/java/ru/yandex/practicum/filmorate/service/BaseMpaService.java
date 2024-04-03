@@ -2,12 +2,10 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BaseMpaService implements MpaService {
@@ -40,9 +38,8 @@ public class BaseMpaService implements MpaService {
     }
 
     @Override
-    public Optional<RatingMpa> getMpaById(int mpaId) throws MpaNotFoundException {
-        RatingMpa mpa = mpaStorage.getMpaById(mpaId)
-                .orElseThrow(() -> new MpaNotFoundException("Mpa с id " + mpaId + " не найден"));
-        return Optional.ofNullable(mpa);
+    public RatingMpa getMpaById(int mpaId) {
+        RatingMpa mpa = mpaStorage.getMpaById(mpaId);
+        return mpa;
     }
 }

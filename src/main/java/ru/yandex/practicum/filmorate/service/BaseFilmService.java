@@ -19,11 +19,11 @@ import java.util.*;
 public class BaseFilmService implements FilmService {
 
     @Autowired
-    @Qualifier("userStorage")
+    @Qualifier("userDbStorage")
     private UserStorage userStorage;
 
     @Autowired
-    @Qualifier("filmStorage")
+    @Qualifier("filmDbStorage")
     private FilmStorage filmStorage;
 
     @Autowired
@@ -63,12 +63,11 @@ public class BaseFilmService implements FilmService {
         return filmStorage.getAllFilms();
     }
 
-    public Film deleteFilm(long filmId) {
-        return filmStorage.deleteFilm(filmId);
+    public void deleteFilm(long filmId) {
+        filmStorage.deleteFilm(filmId);
     }
 
-    public Film getFilmById(long filmId) throws FilmNotFoundException {
-        return filmStorage.getFilmById(filmId).orElseThrow(
-                () -> new FilmNotFoundException("Фильм с id " + filmId + " не найден"));
+    public Film getFilmById(long filmId) {
+        return filmStorage.getFilmById(filmId);
     }
 }

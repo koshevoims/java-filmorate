@@ -1,15 +1,12 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-
-@Component
 @Builder
 @Getter
 @Setter
@@ -21,7 +18,7 @@ public class User {
     private long id;
 
     @Email(message = "Email should be valid")
-    @NotNull(message = "Email should be")
+    @NotEmpty(message = "Email should be")
     private String email;
 
     @NotNull(message = "Login should be")
@@ -32,7 +29,7 @@ public class User {
     private String name;
 
     @NotNull(message = "Birthday cannot be null")
-    @Past(message = "Birthday cannot be in future")
+    @PastOrPresent(message = "Birthday cannot be in future")
     private LocalDate birthday;
 
     public Map<String, Object> toMap() {

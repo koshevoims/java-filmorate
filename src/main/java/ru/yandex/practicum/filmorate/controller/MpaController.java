@@ -36,7 +36,7 @@ public class MpaController {
     public RatingMpa getById(@PathVariable int mpaId) throws MpaNotFoundException {
         log.info("Поиск MPA-рейтинга по идентификатору {}", mpaId);
         try {
-            RatingMpa mpa = mpaService.getMpaById(mpaId).get();
+            RatingMpa mpa = mpaService.getMpaById(mpaId);
             log.info("Mpa-рейтинг по идентификатору {} получен! Это {}", mpaId, mpa.getName());
             return mpa;
         } catch (EmptyResultDataAccessException e) {

@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.validator.MinimumDate;
 
 import javax.validation.constraints.*;
@@ -12,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-@Component
 @Builder
 @Getter
 @Setter
@@ -23,17 +20,16 @@ import java.util.Map;
 @ToString
 public class Film {
     private Long id;
-    @NotNull(message = "Name should be")
     @NotBlank(message = "Name cannot be empty")
     private String name;
     @Size(max = 200, message = "Description must be less than 200 characters")
     private String description;
     @MinimumDate
     @NotNull(message = "releaseDate cannot be null")
-    @PastOrPresent(message = "releaseDate cannot be in future")
     private LocalDate releaseDate;
     @Positive(message = "Duration cannot be negative")
     private Long duration;
+    @NotNull
     private RatingMpa mpa;
     private List<Genre> genres = new ArrayList<>();
     @JsonIgnore

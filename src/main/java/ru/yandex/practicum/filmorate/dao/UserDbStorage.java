@@ -5,7 +5,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -18,7 +17,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@Component("userStorage")
 @RequiredArgsConstructor
 @Repository
 public class UserDbStorage implements UserStorage, RowMapper<User>, FriendService {
@@ -65,11 +63,11 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
     }
 
     @Override
-    public Optional<User> getUserById(long userId) throws UserNotFoundException {
+    public User getUserById(long userId) throws UserNotFoundException {
         try {
             String sqlQuery = "select USER_ID, USER_EMAIL, USER_LOGIN, USER_NAME, USER_BIRTHDAY"
                     + " from USERS where USER_ID = ?";
-            return Optional.of(jdbcTemplate.queryForObject(sqlQuery, this::mapRow, userId));
+            return jdbcTemplate.queryForObject(sqlQuery, this::mapRow, userId);
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("Пользователь не найден");
         }

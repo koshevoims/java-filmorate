@@ -32,32 +32,13 @@ class FilmDbStorageTest {
                 .description("someDescription")
                 .releaseDate(LocalDate.of(2021, 2, 4))
                 .duration(120L)
-                .mpa(mpaDbStorage.getMpaById(1).get())
+                .mpa(mpaDbStorage.getMpaById(1))
                 .genres(genreDbStorage.getAllGenres())
                 .build();
         filmDbStorage.addFilm(film);
         assertThat(filmDbStorage).isNotNull();
         assertEquals(1, filmDbStorage.getAllFilms().size());
-        assertEquals(film, filmDbStorage.getFilmById(film.getId()).get());
-    }
-
-    @Test
-    void deleteFilmTest() throws IncorrectMpaException, IncorrectGenreException {
-        MpaDbStorage mpaDbStorage = new MpaDbStorage(jdbcTemplate);
-        GenreDbStorage genreDbStorage = new GenreDbStorage(jdbcTemplate);
-        FilmDbStorage filmDbStorage = new FilmDbStorage(jdbcTemplate, mpaDbStorage, genreDbStorage);
-        Film film = Film.builder()
-                .id(1L)
-                .name("someName")
-                .description("someDescription")
-                .releaseDate(LocalDate.of(2000, 2, 4))
-                .duration(120L)
-                .mpa(mpaDbStorage.getMpaById(1).get())
-                .genres(genreDbStorage.getAllGenres())
-                .build();
-        filmDbStorage.addFilm(film);
-
-        System.out.println(filmDbStorage.getFilmById(1));
+        assertEquals(film, filmDbStorage.getFilmById(film.getId()));
     }
 
     @Test
@@ -66,25 +47,44 @@ class FilmDbStorageTest {
         GenreDbStorage genreDbStorage = new GenreDbStorage(jdbcTemplate);
         FilmDbStorage filmDbStorage = new FilmDbStorage(jdbcTemplate, mpaDbStorage, genreDbStorage);
         Film film = Film.builder()
-                .id(1L)
+                .id(2L)
                 .name("someName")
                 .description("someDescription")
                 .releaseDate(LocalDate.of(2000, 2, 4))
                 .duration(120L)
-                .mpa(mpaDbStorage.getMpaById(1).get())
+                .mpa(mpaDbStorage.getMpaById(1))
                 .genres(genreDbStorage.getAllGenres())
                 .build();
         filmDbStorage.addFilm(film);
         Film filmToUpdate = Film.builder()
-                .id(1L)
+                .id(2L)
                 .name("someName1")
                 .description("someDesc2")
                 .releaseDate(LocalDate.of(1990, 3, 12))
                 .duration(123L)
-                .mpa(mpaDbStorage.getMpaById(3).get())
+                .mpa(mpaDbStorage.getMpaById(3))
                 .genres(genreDbStorage.getGenresByFilmId(1L))
                 .build();
         filmDbStorage.updateFilm(filmToUpdate);
-        assertThat(filmDbStorage.getFilmById(film.getId()).get()).isNotEqualTo(filmDbStorage.getFilmById(film.getId()));
+        assertThat(filmDbStorage.getFilmById(film.getId())).isNotEqualTo(filmDbStorage.getFilmById(film.getId()));
+    }
+
+    @Test
+    void deleteFilmTest() throws IncorrectMpaException, IncorrectGenreException {
+        MpaDbStorage mpaDbStorage = new MpaDbStorage(jdbcTemplate);
+        GenreDbStorage genreDbStorage = new GenreDbStorage(jdbcTemplate);
+        FilmDbStorage filmDbStorage = new FilmDbStorage(jdbcTemplate, mpaDbStorage, genreDbStorage);
+        Film film = Film.builder()
+                .id(3L)
+                .name("someName2")
+                .description("someDescription2")
+                .releaseDate(LocalDate.of(2000, 2, 4))
+                .duration(120L)
+                .mpa(mpaDbStorage.getMpaById(1))
+                .genres(genreDbStorage.getAllGenres())
+                .build();
+        filmDbStorage.addFilm(film);
+
+        //System.out.println(filmDbStorage.getFilmById(1));
     }
 }

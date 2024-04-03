@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.exception.IncorrectMpaException;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-
 import java.util.List;
 
 public interface FilmService {
@@ -22,7 +21,7 @@ public interface FilmService {
 
     public List<Film> getAllFilms();
 
-    public Film deleteFilm(long filmId);
+    public void deleteFilm(long filmId);
 
     public Film getFilmById(long filmId) throws FilmNotFoundException;
 }

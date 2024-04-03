@@ -13,7 +13,7 @@ public interface GenreService {
 
     public List<Genre> getAllGenres();
 
-    public Genre deleteGenre(int genreId);
+    public void deleteGenre(int genreId);
 
     public Genre getGenreById(int genreId) throws GenreNotFoundException;
 }

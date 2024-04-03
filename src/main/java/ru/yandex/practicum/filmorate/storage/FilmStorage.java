@@ -15,13 +15,13 @@ public interface FilmStorage {
 
     public Film addFilm(Film film) throws MpaNotFoundException, IncorrectMpaException, IncorrectGenreException;
 
-    public Film deleteFilm(long filmId);
+    public void deleteFilm(long filmId);
 
     public Optional<Film> updateFilm(Film film) throws FilmNotFoundException;
 
     public List<Film> getAllFilms();
 
-    public Optional<Film> getFilmById(long filmId) throws FilmNotFoundException;
+    public Film getFilmById(long filmId) throws FilmNotFoundException;
 
     public List<Film> getTopRatedFilms(Integer count);
 }

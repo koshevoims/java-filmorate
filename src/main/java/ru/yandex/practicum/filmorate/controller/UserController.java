@@ -67,7 +67,7 @@ public class UserController {
     public void addFriend(@PathVariable Long userId,
                           @PathVariable Long friendId) throws UserNotFoundException {
         log.info("Пользователь {} добавляет в друзья {}", userId, friendId);
-        User friend = userService.getUserById(friendId);
+        userService.getUserById(friendId);
         userService.addFriend(userId, friendId);
         log.info("Добавление в друзья произошло успешно");
     }
