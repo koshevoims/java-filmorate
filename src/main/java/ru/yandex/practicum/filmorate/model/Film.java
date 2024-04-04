@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.validator.MinimumDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Builder
 @Getter
@@ -31,7 +28,7 @@ public class Film {
     private Long duration;
     @NotNull
     private RatingMpa mpa;
-    private List<Genre> genres = new ArrayList<>();
+    private LinkedHashSet<Genre> genres = new LinkedHashSet<>();
     @JsonIgnore
     private List<Long> likes = new ArrayList<>();
 

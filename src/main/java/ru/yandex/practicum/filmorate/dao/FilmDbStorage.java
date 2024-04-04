@@ -19,6 +19,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Repository
@@ -117,7 +118,8 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
                 .duration(rs.getLong(5))
                 .mpa(mpaStorage.getMpaById(rs.getInt(6)))
                 .build();
-        List<Genre> genres = genreStorage.getGenresByFilmId(film.getId());
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+        genres.addAll(genreStorage.getGenresByFilmId(film.getId()));
         String likesQuery = "select USER_ID from LIKES join FILMS on LIKES.FILM_ID = FILMS.FILM_ID"
                 + " where FILMS.FILM_ID = ?";
         film.setLikes(jdbcTemplate.queryForList(likesQuery, Long.class, film.getId()));
