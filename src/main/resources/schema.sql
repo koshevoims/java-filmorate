@@ -41,8 +41,11 @@ create table if not exists USERS
 
 create table if not exists FILMGENRE
 (
+    FILMGENRE_ID BIGINT auto_increment,
     FILM_ID  BIGINT,
     GENRE_ID INTEGER,
+    constraint FILMGENRE_PK
+    primary key (FILMGENRE_ID),
     constraint FILMGENRE_FILMS_FILM_ID_FK
     foreign key (FILM_ID) references FILMS,
     constraint FILMGENRE_GENRES_GENRE_ID_FK
@@ -51,8 +54,11 @@ create table if not exists FILMGENRE
 
 create table if not exists FRIENDSHIPS
 (
+    FRIENDSHIPS_ID BIGINT auto_increment,
     USER_ID   BIGINT,
     FRIEND_ID BIGINT,
+    constraint FRIENDSHIPS_PK
+    primary key (FRIENDSHIPS_ID),
     constraint FRIENDSHIP_USERS_USER_ID_FK
     foreign key (USER_ID) references USERS,
     constraint FRIENDSHIP_USERS_USER_ID_FK_2
@@ -61,8 +67,11 @@ create table if not exists FRIENDSHIPS
 
 create table if not exists LIKES
 (
+    LIKES_ID BIGINT auto_increment,
     USER_ID BIGINT,
     FILM_ID BIGINT,
+    constraint LIKES_PK
+    primary key (LIKES_ID),
     constraint LIKES_FILMS_FILM_ID_FK
     foreign key (FILM_ID) references FILMS,
     constraint LIKES_USERS_USER_ID_FK
