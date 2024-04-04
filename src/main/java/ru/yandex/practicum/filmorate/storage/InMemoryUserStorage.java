@@ -27,7 +27,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> updateUser(User user) throws UserNotFoundException {
+    public User updateUser(User user) throws UserNotFoundException {
         Long userId = user.getId();
         User currentUser = Optional.of(users.get(userId))
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + userId + " не найден"));
@@ -37,7 +37,7 @@ public class InMemoryUserStorage implements UserStorage {
             currentUser.setLogin(user.getLogin());
             currentUser.setBirthday(user.getBirthday());
         }
-        return Optional.of(currentUser);
+        return currentUser;
     }
 
     @Override

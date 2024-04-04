@@ -48,8 +48,7 @@ public class BaseUserService implements UserService {
 
     @Override
     public User updateUser(User user) throws UserNotFoundException {
-        userStorage.updateUser(user)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь " + user.getLogin() + " не найден"));
+        userStorage.updateUser(user);
         return user;
     }
 

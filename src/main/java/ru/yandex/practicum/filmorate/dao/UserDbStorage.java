@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
@@ -42,13 +41,13 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
     }
 
     @Override
-    public Optional<User> updateUser(User user) {
+    public User updateUser(User user) {
         String sqlQuery = "update USERS set USER_EMAIL = ?, USER_LOGIN = ?, USER_NAME = ?,"
                 + "USER_BIRTHDAY = ? where USER_ID = ?";
         int updateCount = jdbcTemplate.update(sqlQuery,
                 user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
         if (updateCount != 0) {
-            return Optional.of(user);
+            return user;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден");
         }
