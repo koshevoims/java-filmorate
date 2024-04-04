@@ -54,8 +54,7 @@ public class BaseFilmService implements FilmService {
     }
 
     public Film updateFilm(Film film) throws FilmNotFoundException {
-        filmStorage.updateFilm(film).orElseThrow(() -> new FilmNotFoundException("Фильм с id " + film.getId() + " "
-                + "не найден"));
+        filmStorage.updateFilm(film);
         return film;
     }
 

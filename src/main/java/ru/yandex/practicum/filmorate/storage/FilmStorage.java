@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public interface FilmStorage {
@@ -17,7 +16,7 @@ public interface FilmStorage {
 
     public void deleteFilm(long filmId);
 
-    public Optional<Film> updateFilm(Film film) throws FilmNotFoundException;
+    public Film updateFilm(Film film) throws FilmNotFoundException;
 
     public List<Film> getAllFilms();
 

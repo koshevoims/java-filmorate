@@ -20,7 +20,6 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
@@ -69,7 +68,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
     }
 
     @Override
-    public Optional<Film> updateFilm(Film film) {
+    public Film updateFilm(Film film) {
         String sqlQuery = "update FILMS set FILM_TITLE = ?, FILM_DESCRIPTION = ?, FILM_RELEASE_DATE = ?,"
                 + "FILM_DURATION = ?, FILM_MPA_ID = ? where FILM_ID = ?";
         int updateCount = jdbcTemplate.update(sqlQuery,
@@ -77,7 +76,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
                 film.getMpa().getId(), film.getId());
         if (updateCount != 0) {
             film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
-            return Optional.of(film);
+            return film;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Фильм не найден");
         }

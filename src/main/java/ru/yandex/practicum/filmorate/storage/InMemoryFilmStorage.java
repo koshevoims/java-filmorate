@@ -26,7 +26,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Optional<Film> updateFilm(Film film) throws FilmNotFoundException {
+    public Film updateFilm(Film film) throws FilmNotFoundException {
         long filmId = film.getId();
         Film currentFilm = Optional.of(films.get(filmId))
                 .orElseThrow(() -> new FilmNotFoundException("Ошибка при обновлении информации о фильме"));
@@ -36,7 +36,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             currentFilm.setReleaseDate(film.getReleaseDate());
             currentFilm.setDuration(film.getDuration());
         }
-        return Optional.of(currentFilm);
+        return currentFilm;
     }
 
     @Override
