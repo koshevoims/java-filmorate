@@ -28,8 +28,7 @@ public class FilmController {
     }
 
     @PostMapping()
-    public Film addFilm(@Valid @RequestBody Film film)
-            throws MpaNotFoundException, IncorrectMpaException, IncorrectGenreException {
+    public Film addFilm(@Valid @RequestBody Film film) {
         log.info("Добавляю фильм: {}", film.getName());
         filmService.addFilm(film);
         log.info("Фильм {} добавлен; его id: {} ", film.getName(), film.getId());
@@ -37,7 +36,7 @@ public class FilmController {
     }
 
     @PutMapping()
-    public Film updateFilm(@Valid @RequestBody Film film) throws FilmNotFoundException {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         log.info("Обновляю информацию о фильме: {} ", film.getName());
         filmService.updateFilm(film);
         log.info("Информация о фильме обновлена");

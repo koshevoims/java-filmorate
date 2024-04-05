@@ -49,7 +49,7 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
         if (updateCount != 0) {
             return user;
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден");
+            throw new UserNotFoundException("Пользователь не найден");
         }
     }
 
@@ -119,14 +119,18 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
     }
 
     @Override
-    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-        User user = User.builder()
-                .id(rs.getLong(1))
-                .email(rs.getString(2))
-                .login(rs.getString(3))
-                .name(rs.getString(4))
-                .birthday(rs.getDate(5).toLocalDate())
-                .build();
-        return user;
+    public User mapRow(ResultSet rs, int rowNum) {
+        try {
+            User user = User.builder()
+                    .id(rs.getLong(1))
+                    .email(rs.getString(2))
+                    .login(rs.getString(3))
+                    .name(rs.getString(4))
+                    .birthday(rs.getDate(5).toLocalDate())
+                    .build();
+            return user;
+        } catch (SQLException e) {
+            throw new UserNotFoundException("Пользователь не найден");
+        }
     }
 }

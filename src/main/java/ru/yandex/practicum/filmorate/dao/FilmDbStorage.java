@@ -2,12 +2,10 @@ package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.IncorrectGenreException;
 import ru.yandex.practicum.filmorate.exception.IncorrectMpaException;
@@ -38,14 +36,14 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
 
 
     @Override
-    public Film addFilm(Film film) throws IncorrectMpaException, IncorrectGenreException {
+    public Film addFilm(Film film) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("FILMS")
                 .usingGeneratedKeyColumns("FILM_ID");
         if (!mpaStorage.getAllMpa().contains(film.getMpa())) {
             throw new IncorrectMpaException("Рейтинг, указанный в фильме, не найден");
         }
-        if (film.getGenres().size() > 0) {
+        if (!film.getGenres().isEmpty()) {
             List<Genre> allGenre = genreStorage.getAllGenres();
             for (Genre genre : film.getGenres()) {
                 if (!allGenre.contains(genre)) {
@@ -58,7 +56,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
         for (Genre genre : film.getGenres()) {
             String sqlQuery = "insert into FILMGENRE(FILM_ID, GENRE_ID) values(?, ?)";
             jdbcTemplate.update(sqlQuery, film.getId(), genre.getId());
-            genre.setName(genreStorage.getGenreById(genre.getId()).get().getName());
+            genre.setName(genreStorage.getGenreById(genre.getId()).getName());
         }
         return film;
     }
@@ -80,7 +78,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
             film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
             return film;
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Фильм не найден");
+            throw new FilmNotFoundException("Фильм не найден");
         }
     }
 
@@ -91,7 +89,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
     }
 
     @Override
-    public Film getFilmById(long filmId) throws FilmNotFoundException {
+    public Film getFilmById(long filmId) {
         try {
             String sqlQuery = "select FILM_ID, FILM_TITLE, FILM_DESCRIPTION, FILM_RELEASE_DATE, FILM_DURATION,"
                     + "FILM_MPA_ID from FILMS where FILM_ID = ?";
@@ -105,25 +103,30 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
     public List<Film> getTopRatedFilms(Integer count) {
         String sqlQuery = "select FILMS.* from FILMS inner join LIKES on FILMS.FILM_ID = LIKES.FILM_ID "
                 + "group by FILMS.FILM_ID order by count(LIKES.FILM_ID) desc limit ?";
-        return   jdbcTemplate.query(sqlQuery, this::mapRow, count);
+        return jdbcTemplate.query(sqlQuery, this::mapRow, count);
     }
 
     @Override
-    public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Film film = Film.builder()
-                .id(rs.getLong(1))
-                .name(rs.getString(2))
-                .description(rs.getString(3))
-                .releaseDate(rs.getDate(4).toLocalDate())
-                .duration(rs.getLong(5))
-                .mpa(mpaStorage.getMpaById(rs.getInt(6)))
-                .build();
-        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
-        genres.addAll(genreStorage.getGenresByFilmId(film.getId()));
-        String likesQuery = "select USER_ID from LIKES join FILMS on LIKES.FILM_ID = FILMS.FILM_ID"
-                + " where FILMS.FILM_ID = ?";
-        film.setLikes(jdbcTemplate.queryForList(likesQuery, Long.class, film.getId()));
-        film.setGenres(genres);
-        return film;
+    public Film mapRow(ResultSet rs, int rowNum) {
+        try {
+            Film film = Film.builder()
+                    .id(rs.getLong(1))
+                    .name(rs.getString(2))
+                    .description(rs.getString(3))
+                    .releaseDate(rs.getDate(4).toLocalDate())
+                    .duration(rs.getLong(5))
+                    .mpa(mpaStorage.getMpaById(rs.getInt(6)))
+                    .build();
+            LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+            genres.addAll(genreStorage.getGenresByFilmId(film.getId()));
+            String likesQuery = "select USER_ID from LIKES join FILMS on LIKES.FILM_ID = FILMS.FILM_ID"
+                    + " where FILMS.FILM_ID = ?";
+            film.setLikes(jdbcTemplate.queryForList(likesQuery, Long.class, film.getId()));
+            film.setGenres(genres);
+            return film;
+        } catch (SQLException e) {
+            throw new FilmNotFoundException("Фильм не найден");
+        }
+
     }
 }

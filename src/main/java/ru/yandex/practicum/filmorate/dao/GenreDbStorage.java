@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @Repository
@@ -52,12 +51,12 @@ public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
     }
 
     @Override
-    public Optional<Genre> getGenreById(int genreId) throws GenreNotFoundException {
+    public Genre getGenreById(int genreId) {
         try {
             String sqlQuery = "select GENRE_ID, GENRE_NAME from GENRES where GENRE_ID = ?";
-            return Optional.of(jdbcTemplate.queryForObject(sqlQuery, this::mapRow, genreId));
+            return jdbcTemplate.queryForObject(sqlQuery, this::mapRow, genreId);
         } catch (EmptyResultDataAccessException e) {
-            throw new GenreNotFoundException("Жанр не найден");
+            throw new GenreNotFoundException("Жанр с id " + genreId + " не найден");
         }
     }
 

@@ -1,11 +1,9 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FriendService;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 public interface UserStorage extends FriendService {
@@ -13,11 +11,11 @@ public interface UserStorage extends FriendService {
 
     public User deleteUser(long userId);
 
-    public User updateUser(User user) throws UserNotFoundException;
+    public User updateUser(User user);
 
     public List<User> getAllUsers();
 
-    public User getUserById(long userId) throws UserNotFoundException;
+    public User getUserById(long userId);
 
-    public User mapRow(ResultSet rs, int rowNum) throws SQLException;
+    public User mapRow(ResultSet rs, int rowNum);
 }

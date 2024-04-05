@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.yandex.practicum.filmorate.exception.*;
@@ -64,6 +65,24 @@ public class ErrorHandler {
         return new ResponseEntity<>(
                 Map.of("Ошибка", e.getMessage()),
                 HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleNotValidException(final MethodArgumentNotValidException e) {
+        log.debug("400 Bad request - Ошибка с полем: {}", e.getMessage(), e);
+        return new ResponseEntity<>(
+                Map.of("Ошибка", e.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleThrowableException(final Throwable e) {
+        log.debug("500 Internal Server error: {}", e.getMessage(), e);
+        return new ResponseEntity<>(
+                Map.of("Ошибка", e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
 }

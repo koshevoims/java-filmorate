@@ -3,17 +3,12 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.IncorrectGenreException;
-import ru.yandex.practicum.filmorate.exception.IncorrectMpaException;
-import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
-
 
 @Service
 public class BaseFilmService implements FilmService {
@@ -48,12 +43,12 @@ public class BaseFilmService implements FilmService {
     }
 
 
-    public Film addFilm(Film film) throws IncorrectMpaException, MpaNotFoundException, IncorrectGenreException {
+    public Film addFilm(Film film) {
         filmStorage.addFilm(film);
         return film;
     }
 
-    public Film updateFilm(Film film) throws FilmNotFoundException {
+    public Film updateFilm(Film film){
         filmStorage.updateFilm(film);
         return film;
     }

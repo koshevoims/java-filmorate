@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
 
 import java.util.List;
@@ -15,5 +14,5 @@ public interface MpaService {
 
     public RatingMpa deleteMpa(int mpaId);
 
-    public RatingMpa getMpaById(int mpaId) throws MpaNotFoundException;
+    public RatingMpa getMpaById(int mpaId);
 }
