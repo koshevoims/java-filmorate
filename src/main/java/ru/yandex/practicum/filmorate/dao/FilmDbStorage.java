@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.exception.IncorrectGenreException;
 import ru.yandex.practicum.filmorate.exception.IncorrectMpaException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.RatingMpa;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -88,21 +89,31 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
 
     @Override
     public List<Film> getAllFilms() {
-        String sqlQuery = "SELECT * FROM FILMS";
+        String sqlQuery = "SELECT F.FILM_ID,"
+                + " F.FILM_TITLE,"
+                + " F.FILM_DESCRIPTION,"
+                + " F.FILM_RELEASE_DATE,"
+                + " F.FILM_DURATION,"
+                + " R.MPA_ID"
+                + " R.MPA_NAME"
+                + " FROM FILMS AS F"
+                + " LEFT JOIN RATINGMPA AS R ON F.FILM_MPA_ID  = R.MPA_ID";
         return jdbcTemplate.query(sqlQuery, this::mapRow);
     }
 
     @Override
     public Film getFilmById(long filmId) {
         try {
-            String sqlQuery = "SELECT FILM_ID,"
-                                + " FILM_TITLE,"
-                                + " FILM_DESCRIPTION,"
-                                + " FILM_RELEASE_DATE,"
-                                + " FILM_DURATION,"
-                                + " FILM_MPA_ID"
-                                + " FROM FILMS"
-                                + " WHERE FILM_ID = ?";
+            String sqlQuery = "SELECT F.FILM_ID,"
+                                + " F.FILM_TITLE,"
+                                + " F.FILM_DESCRIPTION,"
+                                + " F.FILM_RELEASE_DATE,"
+                                + " F.FILM_DURATION,"
+                                + " R.MPA_ID"
+                                + " R.MPA_NAME"
+                                + " FROM FILMS AS F"
+                                + " LEFT JOIN RATINGMPA AS R ON F.FILM_MPA_ID  = R.MPA_ID"
+                                + " WHERE F.FILM_ID = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRow, filmId);
         } catch (EmptyResultDataAccessException e) {
             throw new FilmNotFoundException("Фильм не найден");
@@ -111,11 +122,18 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
 
     @Override
     public List<Film> getTopRatedFilms(Integer count) {
-        String sqlQuery = "SELECT FILMS.*"
-                            + " FROM FILMS"
-                            + " INNER JOIN LIKES ON FILMS.FILM_ID = LIKES.FILM_ID"
-                            + " GROUP BY FILMS.FILM_ID"
-                            + " ORDER BY COUNT(LIKES.FILM_ID)"
+        String sqlQuery = "SELECT F.FILM_ID,"
+                            + " F.FILM_TITLE,"
+                            + " F.FILM_DESCRIPTION,"
+                            + " F.FILM_RELEASE_DATE,"
+                            + " F.FILM_DURATION,"
+                            + " R.MPA_ID,"
+                            + " R.MPA_NAME"
+                            + " FROM FILMS AS F"
+                            + " LEFT JOIN LIKES AS L ON F.FILM_ID = L.FILM_ID"
+                            + " LEFT JOIN RATINGMPA AS R ON F.FILM_MPA_ID  = R.MPA_ID"
+                            + " GROUP BY F.FILM_ID"
+                            + " ORDER BY COUNT(L.FILM_ID)"
                             + " DESC limit ?";
         return jdbcTemplate.query(sqlQuery, this::mapRow, count);
     }
@@ -129,7 +147,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
                     .description(rs.getString(3))
                     .releaseDate(rs.getDate(4).toLocalDate())
                     .duration(rs.getLong(5))
-                    .mpa(mpaStorage.getMpaById(rs.getInt(6)))
+                    .mpa(new RatingMpa(rs.getInt(6), rs.getString(7)))
                     .build();
             LinkedHashSet<Genre> genres = new LinkedHashSet<>();
             genres.addAll(genreStorage.getGenresByFilmId(film.getId()));
@@ -143,6 +161,5 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
         } catch (SQLException e) {
             throw new FilmNotFoundException("Фильм не найден");
         }
-
     }
 }
