@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.exception.*;
@@ -11,11 +12,13 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.*;
 
 @RestController
 @Slf4j
 @RequestMapping("/films")
+@Validated
 public class FilmController {
     private final FilmService filmService;
 
@@ -81,7 +84,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getTopRatedFilms(@RequestParam(required = false, defaultValue = "10") Integer count) {
+    public List<Film> getTopRatedFilms(@RequestParam(required = false, defaultValue = "10") @Positive Integer count) {
         log.info("Получен запрос на составление списка {} самых оцениваемых фильмов", count);
         List<Film> topRatedFilms = filmService.getTopRatedFilms(count);
         log.info("Список фильмов с наибольшим количеством оценок получен");
