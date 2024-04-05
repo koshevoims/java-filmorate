@@ -94,7 +94,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
                 + " F.FILM_DESCRIPTION,"
                 + " F.FILM_RELEASE_DATE,"
                 + " F.FILM_DURATION,"
-                + " R.MPA_ID"
+                + " R.MPA_ID,"
                 + " R.MPA_NAME"
                 + " FROM FILMS AS F"
                 + " LEFT JOIN RATINGMPA AS R ON F.FILM_MPA_ID  = R.MPA_ID";
@@ -109,7 +109,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
                                 + " F.FILM_DESCRIPTION,"
                                 + " F.FILM_RELEASE_DATE,"
                                 + " F.FILM_DURATION,"
-                                + " R.MPA_ID"
+                                + " R.MPA_ID,"
                                 + " R.MPA_NAME"
                                 + " FROM FILMS AS F"
                                 + " LEFT JOIN RATINGMPA AS R ON F.FILM_MPA_ID  = R.MPA_ID"
