@@ -26,27 +26,27 @@ public class MpaDbStorage implements MpaStorage, RowMapper<RatingMpa> {
 
     @Override
     public RatingMpa addMpa(RatingMpa mpa) {
-        String sqlQuery = "insert into RATINGMPA(MPA_NAME) values(?)";
+        String sqlQuery = "INSERT INTO RATINGMPA(MPA_NAME) values(?)";
         jdbcTemplate.update(sqlQuery, mpa.getName());
         return mpa;
     }
 
     @Override
     public RatingMpa updateMpa(RatingMpa mpa) {
-        String sqlQuery = "update RATINGMPA set MPA_NAME = ? where MPA_ID = ?";
+        String sqlQuery = "UPDATE RATINGMPA SET MPA_NAME = ? WHERE MPA_ID = ?";
         jdbcTemplate.update(sqlQuery, mpa.getName(), mpa.getId());
         return mpa;
     }
 
     @Override
     public List<RatingMpa> getAllMpa() {
-        String sqlQuery = "select MPA_ID, MPA_NAME from RATINGMPA";
+        String sqlQuery = "SELECT MPA_ID, MPA_NAME FROM RATINGMPA";
         return jdbcTemplate.query(sqlQuery, this::mapRow);
     }
 
     @Override
     public RatingMpa deleteMpa(int mpaId) {
-        String sqlQuery = "delete from RATINGMPA where MPA_ID = ?";
+        String sqlQuery = "DELETE FROM RATINGMPA WHERE MPA_ID = ?";
         jdbcTemplate.update(sqlQuery, mpaId);
         return null;
     }
@@ -54,7 +54,7 @@ public class MpaDbStorage implements MpaStorage, RowMapper<RatingMpa> {
     @Override
     public RatingMpa getMpaById(int mpaId) throws MpaNotFoundException {
         try {
-            String sqlQuery = "select MPA_ID, MPA_NAME from RATINGMPA where MPA_ID = ?";
+            String sqlQuery = "SELECT MPA_ID, MPA_NAME FROM RATINGMPA WHERE MPA_ID = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRow, mpaId);
         } catch (EmptyResultDataAccessException e) {
             throw new MpaNotFoundException("Mpa не найден");

@@ -26,34 +26,34 @@ public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
 
     @Override
     public Genre addGenre(Genre genre) {
-        String sqlQuery = "insert into GENRES(GENRE_NAME) values(?)";
+        String sqlQuery = "INSERT INTO GENRES(GENRE_NAME) VALUES(?)";
         jdbcTemplate.update(sqlQuery, genre.getName());
         return genre;
     }
 
     @Override
     public Genre updateGenre(Genre genre) {
-        String sqlQuery = "update GENRES set GENRE_NAME = ? where GENRE_ID = ?";
+        String sqlQuery = "UPDATE GENRES SET GENRE_NAME = ? WHERE GENRE_ID = ?";
         jdbcTemplate.update(sqlQuery, genre.getName(), genre.getId());
         return genre;
     }
 
     @Override
     public List<Genre> getAllGenres() {
-        String sqlQuery = "select GENRE_ID, GENRE_NAME from GENRES";
+        String sqlQuery = "SELECT GENRE_ID, GENRE_NAME FROM GENRES";
         return jdbcTemplate.query(sqlQuery, this::mapRow);
     }
 
     @Override
     public void deleteGenre(int genreId) {
-        String sqlQuery = "delete from GENRES where GENRE_ID = ?";
+        String sqlQuery = "DELETE FROM GENRES WHERE GENRE_ID = ?";
         jdbcTemplate.update(sqlQuery, genreId);
     }
 
     @Override
     public Genre getGenreById(int genreId) {
         try {
-            String sqlQuery = "select GENRE_ID, GENRE_NAME from GENRES where GENRE_ID = ?";
+            String sqlQuery = "SELECT GENRE_ID, GENRE_NAME FROM GENRES WHERE GENRE_ID = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRow, genreId);
         } catch (EmptyResultDataAccessException e) {
             throw new GenreNotFoundException("Жанр с id " + genreId + " не найден");
@@ -62,9 +62,11 @@ public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
 
     @Override
     public List<Genre> getGenresByFilmId(Long filmId) {
-        String sqlQuery = "select distinct G.GENRE_ID, G.GENRE_NAME from FILMGENRE AS FG"
-                + "    left join GENRES AS G ON FG.GENRE_ID = G.GENRE_ID\n"
-                + "    where FILM_ID = ?";
+        String sqlQuery = "SELECT DISTINCT G.GENRE_ID,"
+                            + " G.GENRE_NAME"
+                            + " FROM FILMGENRE AS FG"
+                            + " LEFT JOIN GENRES AS G ON FG.GENRE_ID = G.GENRE_ID"
+                            + " WHERE FILM_ID = ?";
         return jdbcTemplate.query(sqlQuery, this::mapRow, filmId);
     }
 

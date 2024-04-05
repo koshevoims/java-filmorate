@@ -2,11 +2,9 @@ package ru.yandex.practicum.filmorate.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FriendService;
@@ -35,15 +33,19 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
 
     @Override
     public User deleteUser(long userId) {
-        String sqlQuery = "delete from USERS where USER_ID = ?";
+        String sqlQuery = "DELETE FROM USERS WHERE USER_ID = ?";
         jdbcTemplate.update(sqlQuery, userId);
         return null;
     }
 
     @Override
     public User updateUser(User user) {
-        String sqlQuery = "update USERS set USER_EMAIL = ?, USER_LOGIN = ?, USER_NAME = ?,"
-                + "USER_BIRTHDAY = ? where USER_ID = ?";
+        String sqlQuery = "UPDATE USERS"
+                            + " SET USER_EMAIL = ?,"
+                            + " USER_LOGIN = ?,"
+                            + " USER_NAME = ?,"
+                            + " USER_BIRTHDAY = ?"
+                            + " WHERE USER_ID = ?";
         int updateCount = jdbcTemplate.update(sqlQuery,
                 user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
         if (updateCount != 0) {
@@ -55,17 +57,25 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
 
     @Override
     public List<User> getAllUsers() {
-        String sqlQuery = "select USERS.USER_ID, USERS.USER_EMAIL, USERS.USER_LOGIN, USERS.USER_NAME,"
-                + " USERS.USER_BIRTHDAY"
-                + " from USERS";
+        String sqlQuery = "SELECT USERS.USER_ID,"
+                            + " USERS.USER_EMAIL,"
+                            + " USERS.USER_LOGIN,"
+                            + " USERS.USER_NAME,"
+                            + " USERS.USER_BIRTHDAY"
+                            + " FROM USERS";
         return jdbcTemplate.query(sqlQuery, this::mapRow);
     }
 
     @Override
     public User getUserById(long userId) throws UserNotFoundException {
         try {
-            String sqlQuery = "select USER_ID, USER_EMAIL, USER_LOGIN, USER_NAME, USER_BIRTHDAY"
-                    + " from USERS where USER_ID = ?";
+            String sqlQuery = "SELECT USER_ID,"
+                                + " USER_EMAIL,"
+                                + " USER_LOGIN,"
+                                + " USER_NAME,"
+                                + " USER_BIRTHDAY"
+                                + " FROM USERS"
+                                + " WHERE USER_ID = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRow, userId);
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("Пользователь не найден");
@@ -75,7 +85,7 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
     @Override
     public void addFriend(Long userId, Long friendId) throws UserNotFoundException {
         try {
-            String sqlQuery = "insert into FRIENDSHIPS(USER_ID, FRIEND_ID) VALUES(?, ?)";
+            String sqlQuery = "INSERT INTO FRIENDSHIPS(USER_ID, FRIEND_ID) VALUES(?, ?)";
             jdbcTemplate.update(sqlQuery, userId, friendId);
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("Пользователь не найден");
@@ -85,10 +95,10 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
     @Override
     public List<User> getFriends(Long userId) throws UserNotFoundException {
         try {
-            String test = "select u.*"
-                    + " from FRIENDSHIPS AS fs"
-                    + " left join USERS as U on U.USER_ID = fs.FRIEND_ID"
-                    + " where fs.USER_ID = ?";
+            String test = "SELECT U.*"
+                            + " FROM FRIENDSHIPS AS FS"
+                            + " LEFT JOIN USERS AS U ON U.USER_ID = FS.FRIEND_ID"
+                            + " WHERE FS.USER_ID = ?";
             return jdbcTemplate.query(test, this::mapRow, userId);
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("Пользователь не найден");
@@ -98,7 +108,7 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
     @Override
     public void deleteFriend(Long userId, Long friendId) throws UserNotFoundException {
         try {
-            String sqlQuery = "delete from FRIENDSHIPS where USER_ID = ? AND FRIEND_ID = ?";
+            String sqlQuery = "DELETE FROM FRIENDSHIPS WHERE USER_ID = ? AND FRIEND_ID = ?";
             jdbcTemplate.update(sqlQuery, userId, friendId);
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("Пользователь не найден");
@@ -108,10 +118,10 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
     @Override
     public List<User> getMutualFriends(Long userId1, Long userId2) throws UserNotFoundException {
         try {
-            String sqlQuery = "select u.* from FRIENDSHIPS as f1"
-                    + " inner join FRIENDSHIPS as f2 on f1.FRIEND_ID = f2.FRIEND_ID "
-                    + "and f1.USER_ID = ? and f2.USER_ID = ? "
-                    + "inner join USERS as u on u.USER_ID = f2.FRIEND_ID";
+            String sqlQuery = "SELECT U.* FROM FRIENDSHIPS AS F1"
+                                + " INNER JOIN FRIENDSHIPS AS f2 ON f1.FRIEND_ID = f2.FRIEND_ID"
+                                + " AND f1.USER_ID = ? and f2.USER_ID = ?"
+                                + " INNER JOIN USERS AS U ON U.USER_ID = f2.FRIEND_ID";
             return jdbcTemplate.query(sqlQuery, this::mapRow, userId1, userId2);
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("Пользователь не найден");

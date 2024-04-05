@@ -54,7 +54,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
         film.setId(simpleJdbcInsert.executeAndReturnKey(film.toMap()).longValue());
         film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
         for (Genre genre : film.getGenres()) {
-            String sqlQuery = "insert into FILMGENRE(FILM_ID, GENRE_ID) values(?, ?)";
+            String sqlQuery = "INSERT INTO FILMGENRE(FILM_ID, GENRE_ID) VALUES(?, ?)";
             jdbcTemplate.update(sqlQuery, film.getId(), genre.getId());
             genre.setName(genreStorage.getGenreById(genre.getId()).getName());
         }
@@ -63,14 +63,18 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
 
     @Override
     public void deleteFilm(long filmId) {
-        String sqlQuery = "delete from FILMS where FILM_ID = ?";
+        String sqlQuery = "DELETE FROM FILMS WHERE FILM_ID = ?";
         jdbcTemplate.update(sqlQuery, filmId);
     }
 
     @Override
     public Film updateFilm(Film film) {
-        String sqlQuery = "update FILMS set FILM_TITLE = ?, FILM_DESCRIPTION = ?, FILM_RELEASE_DATE = ?,"
-                + "FILM_DURATION = ?, FILM_MPA_ID = ? where FILM_ID = ?";
+        String sqlQuery = "UPDATE FILMS SET FILM_TITLE = ?,"
+                            + " FILM_DESCRIPTION = ?,"
+                            + " FILM_RELEASE_DATE = ?,"
+                            + " FILM_DURATION = ?,"
+                            + " FILM_MPA_ID = ?"
+                            + " WHERE FILM_ID = ?";
         int updateCount = jdbcTemplate.update(sqlQuery,
                 film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId(), film.getId());
@@ -84,15 +88,21 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
 
     @Override
     public List<Film> getAllFilms() {
-        String sqlQuery = "select * from FILMS";
+        String sqlQuery = "SELECT * FROM FILMS";
         return jdbcTemplate.query(sqlQuery, this::mapRow);
     }
 
     @Override
     public Film getFilmById(long filmId) {
         try {
-            String sqlQuery = "select FILM_ID, FILM_TITLE, FILM_DESCRIPTION, FILM_RELEASE_DATE, FILM_DURATION,"
-                    + "FILM_MPA_ID from FILMS where FILM_ID = ?";
+            String sqlQuery = "SELECT FILM_ID,"
+                                + " FILM_TITLE,"
+                                + " FILM_DESCRIPTION,"
+                                + " FILM_RELEASE_DATE,"
+                                + " FILM_DURATION,"
+                                + " FILM_MPA_ID"
+                                + " FROM FILMS"
+                                + " WHERE FILM_ID = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRow, filmId);
         } catch (EmptyResultDataAccessException e) {
             throw new FilmNotFoundException("Фильм не найден");
@@ -101,8 +111,12 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
 
     @Override
     public List<Film> getTopRatedFilms(Integer count) {
-        String sqlQuery = "select FILMS.* from FILMS inner join LIKES on FILMS.FILM_ID = LIKES.FILM_ID "
-                + "group by FILMS.FILM_ID order by count(LIKES.FILM_ID) desc limit ?";
+        String sqlQuery = "SELECT FILMS.*"
+                            + " FROM FILMS"
+                            + " INNER JOIN LIKES ON FILMS.FILM_ID = LIKES.FILM_ID"
+                            + " GROUP BY FILMS.FILM_ID"
+                            + " ORDER BY COUNT(LIKES.FILM_ID)"
+                            + " DESC limit ?";
         return jdbcTemplate.query(sqlQuery, this::mapRow, count);
     }
 
@@ -119,8 +133,10 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
                     .build();
             LinkedHashSet<Genre> genres = new LinkedHashSet<>();
             genres.addAll(genreStorage.getGenresByFilmId(film.getId()));
-            String likesQuery = "select USER_ID from LIKES join FILMS on LIKES.FILM_ID = FILMS.FILM_ID"
-                    + " where FILMS.FILM_ID = ?";
+            String likesQuery = "SELECT USER_ID"
+                                + " FROM LIKES"
+                                + " JOIN FILMS ON LIKES.FILM_ID = FILMS.FILM_ID"
+                                + " WHERE FILMS.FILM_ID = ?";
             film.setLikes(jdbcTemplate.queryForList(likesQuery, Long.class, film.getId()));
             film.setGenres(genres);
             return film;
