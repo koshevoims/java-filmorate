@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 @Repository
 public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
-    final private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
@@ -75,7 +75,7 @@ public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
     @Override
     public void updateFilmGenre(Film film) {
         List<Object[]> batch = new ArrayList<Object[]>();
-        for (Genre genre : film.getGenres() ) {
+        for (Genre genre : film.getGenres()) {
             Object[] values = new Object[] {
                     film.getId(), genre.getId()};
             batch.add(values);
