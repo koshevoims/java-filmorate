@@ -48,7 +48,7 @@ public class BaseFilmService implements FilmService {
         return film;
     }
 
-    public Film updateFilm(Film film){
+    public Film updateFilm(Film film) {
         filmStorage.updateFilm(film);
         return film;
     }

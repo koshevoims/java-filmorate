@@ -7,17 +7,19 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @Repository
 public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
-    private final JdbcTemplate jdbcTemplate;
+    final private JdbcTemplate jdbcTemplate;
 
     @Autowired
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
@@ -70,6 +72,16 @@ public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
         return jdbcTemplate.query(sqlQuery, this::mapRow, filmId);
     }
 
+    @Override
+    public void updateFilmGenre(Film film) {
+        List<Object[]> batch = new ArrayList<Object[]>();
+        for (Genre genre : film.getGenres() ) {
+            Object[] values = new Object[] {
+                    film.getId(), genre.getId()};
+            batch.add(values);
+        }
+        jdbcTemplate.batchUpdate("INSERT INTO FILMGENRE(FILM_ID, GENRE_ID) VALUES (?, ?)", batch);
+    }
 
     public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
         return Genre.builder()
@@ -77,5 +89,4 @@ public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
                 .name(rs.getString(2))
                 .build();
     }
-
 }

@@ -54,11 +54,7 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
         }
         film.setId(simpleJdbcInsert.executeAndReturnKey(film.toMap()).longValue());
         film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
-        for (Genre genre : film.getGenres()) {
-            String sqlQuery = "INSERT INTO FILMGENRE(FILM_ID, GENRE_ID) VALUES(?, ?)";
-            jdbcTemplate.update(sqlQuery, film.getId(), genre.getId());
-            genre.setName(genreStorage.getGenreById(genre.getId()).getName());
-        }
+        genreStorage.updateFilmGenre(film);
         return film;
     }
 
