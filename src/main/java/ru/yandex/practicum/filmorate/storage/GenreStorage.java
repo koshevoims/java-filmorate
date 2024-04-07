@@ -20,4 +20,6 @@ public interface GenreStorage {
     public List<Genre> getGenresByFilmId(Long filmId);
 
     public void updateFilmGenre(Film film);
+
+    public List<Film> injectGenreToFilms(List<Film> films);
 }

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,9 +14,10 @@ import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @Repository
 public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
@@ -83,10 +85,53 @@ public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
         jdbcTemplate.batchUpdate("INSERT INTO FILMGENRE(FILM_ID, GENRE_ID) VALUES (?, ?)", batch);
     }
 
+    @Override
+    public List<Film> injectGenreToFilms(List<Film> films) {
+        List<String> fid = films.stream().map(f -> f.getId().toString()).collect(Collectors.toList());
+        String args = String.join(", ", fid);
+        System.out.println(args);
+        String sqlQuery = "SELECT FG.FILM_ID, FG.GENRE_ID, G.GENRE_NAME"
+                                + " FROM FILMS AS F"
+                                + " LEFT JOIN FILMGENRE AS FG ON F.FILM_ID = FG.FILM_ID"
+                                + " LEFT JOIN GENRES AS G ON FG.GENRE_ID = G.GENRE_ID"
+                                + " WHERE F.FILM_ID IN (" + args + ")";
+
+
+        List<Map<Integer, Genre>> result = jdbcTemplate.query(sqlQuery, this::injectMapRow);
+
+        Map<Long, LinkedHashSet<Genre>> maps = new HashMap<>();
+        for (Map<Integer, Genre> igm : result) {
+          if ((igm.keySet().stream().findFirst().get() != 0)) {
+              Integer i = igm.keySet().stream().findFirst().get();
+              LinkedHashSet<Genre> lhs = new LinkedHashSet<>();
+              if (maps.containsKey(i)) {
+                  lhs = maps.get(i);
+                  lhs.add(igm.get(i));
+                  maps.put(Long.valueOf(i), lhs);
+              } else {
+                  lhs.add(igm.get(i));
+                  maps.put(Long.valueOf(i), lhs);
+              }
+          }
+        }
+        for (Film film : films) {
+            if (maps.containsKey(film.getId())) {
+                film.setGenres(maps.get(film.getId()));
+            }
+        }
+        return films;
+    }
+
     public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
         return Genre.builder()
                 .id(rs.getInt(1))
                 .name(rs.getString(2))
                 .build();
+    }
+
+    public Map<Integer, Genre> injectMapRow(ResultSet rs, int rowNum) throws SQLException {
+        Map<Integer, Genre> mp = new HashMap<Integer, Genre>();
+        mp.put(rs.getInt(1), new Genre(rs.getInt(2), rs.getString(3)));
+        return mp;
     }
 }
