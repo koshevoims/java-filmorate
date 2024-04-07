@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserStorage extends FriendService {
     public User addUser(User user);
 
-    public User deleteUser(long userId);
+    public void deleteUser(long userId);
 
     public User updateUser(User user);
 

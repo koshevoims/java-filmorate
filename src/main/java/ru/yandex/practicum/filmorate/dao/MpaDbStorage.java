@@ -45,10 +45,9 @@ public class MpaDbStorage implements MpaStorage, RowMapper<RatingMpa> {
     }
 
     @Override
-    public RatingMpa deleteMpa(int mpaId) {
+    public void deleteMpa(int mpaId) {
         String sqlQuery = "DELETE FROM RATINGMPA WHERE MPA_ID = ?";
         jdbcTemplate.update(sqlQuery, mpaId);
-        return null;
     }
 
     @Override

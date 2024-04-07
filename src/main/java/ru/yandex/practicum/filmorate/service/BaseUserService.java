@@ -58,8 +58,8 @@ public class BaseUserService implements UserService {
     }
 
     @Override
-    public User deleteUser(long userId) {
-        return userStorage.deleteUser(userId);
+    public void deleteUser(long userId) {
+        userStorage.deleteUser(userId);
     }
 
     @Override

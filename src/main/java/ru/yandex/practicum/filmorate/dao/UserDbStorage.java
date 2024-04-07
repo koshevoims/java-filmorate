@@ -32,10 +32,9 @@ public class UserDbStorage implements UserStorage, RowMapper<User>, FriendServic
     }
 
     @Override
-    public User deleteUser(long userId) {
+    public void deleteUser(long userId) {
         String sqlQuery = "DELETE FROM USERS WHERE USER_ID = ?";
         jdbcTemplate.update(sqlQuery, userId);
-        return null;
     }
 
     @Override

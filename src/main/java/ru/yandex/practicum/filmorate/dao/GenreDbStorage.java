@@ -96,7 +96,6 @@ public class GenreDbStorage implements GenreStorage, RowMapper<Genre> {
                                 + " LEFT JOIN GENRES AS G ON FG.GENRE_ID = G.GENRE_ID"
                                 + " WHERE F.FILM_ID IN (" + args + ")";
 
-
         List<Map<Integer, Genre>> result = jdbcTemplate.query(sqlQuery, this::injectMapRow);
 
         Map<Long, LinkedHashSet<Genre>> maps = new HashMap<>();

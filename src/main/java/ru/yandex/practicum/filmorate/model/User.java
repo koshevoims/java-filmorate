@@ -21,7 +21,6 @@ public class User {
     @NotEmpty(message = "Email should be")
     private String email;
 
-    @NotNull(message = "Login should be")
     @NotBlank(message = "Login cannot be empty")
     @Pattern(regexp = "\\S+", message = "Login consist space")
     private String login;

@@ -12,7 +12,7 @@ public interface MpaStorage {
 
     public List<RatingMpa> getAllMpa();
 
-    public RatingMpa deleteMpa(int mpaId);
+    public void deleteMpa(int mpaId);
 
     public RatingMpa getMpaById(int mpaId);
 }

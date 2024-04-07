@@ -30,7 +30,7 @@ public class Film {
     private RatingMpa mpa;
     private LinkedHashSet<Genre> genres = new LinkedHashSet<>();
     @JsonIgnore
-    private List<Long> likes = new ArrayList<>();
+    private List<Long> likes;
 
     public Map<String, Object> toMap() {
         Map<String, Object> values = new HashMap<>();

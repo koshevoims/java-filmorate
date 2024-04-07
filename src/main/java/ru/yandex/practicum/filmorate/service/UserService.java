@@ -19,7 +19,7 @@ public interface UserService {
 
     public List<User> getAllUsers();
 
-    public User deleteUser(long userId);
+    public void deleteUser(long userId);
 
     public User getUserById(long userId);
 }

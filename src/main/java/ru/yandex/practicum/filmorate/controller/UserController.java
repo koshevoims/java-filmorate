@@ -47,11 +47,10 @@ public class UserController {
     }
 
     @DeleteMapping()
-    public User deleteUser(long userId) {
+    public void deleteUser(long userId) {
         log.info("Удаление пользователя с id: {}", userId);
-        User userToDelete = userService.deleteUser(userId);
+        userService.deleteUser(userId);
         log.info("Пользователь удален");
-        return userToDelete;
     }
 
     @GetMapping("/{userId}")

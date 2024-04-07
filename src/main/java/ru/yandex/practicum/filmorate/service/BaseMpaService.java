@@ -33,8 +33,8 @@ public class BaseMpaService implements MpaService {
     }
 
     @Override
-    public RatingMpa deleteMpa(int mpaId) {
-        return mpaStorage.deleteMpa(mpaId);
+    public void deleteMpa(int mpaId) {
+        mpaStorage.deleteMpa(mpaId);
     }
 
     @Override

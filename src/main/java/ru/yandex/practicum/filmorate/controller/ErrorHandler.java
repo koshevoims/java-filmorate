@@ -15,8 +15,8 @@ import java.util.Map;
 public class ErrorHandler {
 
     @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleUnknownFilmException(final FilmNotFoundException e) {
-        log.debug("404 Not found film - Страница не найдена {}", e.getMessage(), e);
+    public ResponseEntity<Map<String, String>> handleUnknownException(final FilmNotFoundException e) {
+        log.debug("404 Not found - Страница не найдена {}", e.getMessage(), e);
         return new ResponseEntity<>(
                 Map.of("Ошибка", e.getMessage()),
                 HttpStatus.NOT_FOUND
