@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
@@ -45,13 +46,23 @@ public class FilmDbStorage implements FilmStorage, RowMapper<Film> {
             throw new IncorrectMpaException("Рейтинг, указанный в фильме, не найден");
         }
         if (!film.getGenres().isEmpty()) {
-            List<Genre> allGenre = genreStorage.getAllGenres();
-            for (Genre genre : film.getGenres()) {
-                if (!allGenre.contains(genre)) {
-                    throw new IncorrectGenreException("Жанр фильма не найден");
+
+            LinkedHashSet<Genre> genres = film.getGenres();
+            List<String> li = genres.stream().map(g -> Integer.toString(g.getId())).collect(Collectors.toList());
+            String args = String.join(", ", li);
+            String sqlQuery = "SELECT COUNT(*) FROM GENRES WHERE GENRE_ID IN (" + args + ")";
+            List<Integer> res = jdbcTemplate.query(sqlQuery, new RowMapper<Integer>() {
+                @Override
+                public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return rs.getInt(1);
                 }
+            });
+
+            if (genres.size() != res.stream().findFirst().get()) {
+                    throw new IncorrectGenreException("Жанр фильма не найден");
             }
         }
+
         film.setId(simpleJdbcInsert.executeAndReturnKey(film.toMap()).longValue());
         film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
         genreStorage.updateFilmGenre(film);
