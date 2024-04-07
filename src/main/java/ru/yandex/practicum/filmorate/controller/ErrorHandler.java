@@ -14,36 +14,10 @@ import java.util.Map;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleUnknownException(final FilmNotFoundException e) {
+    @ExceptionHandler({FilmNotFoundException.class,
+            UserNotFoundException.class, MpaNotFoundException.class, GenreNotFoundException.class})
+    public ResponseEntity<Map<String, String>> handleUnknownException(final RuntimeException e) {
         log.debug("404 Not found - Страница не найдена {}", e.getMessage(), e);
-        return new ResponseEntity<>(
-                Map.of("Ошибка", e.getMessage()),
-                HttpStatus.NOT_FOUND
-        );
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleUnknownUserException(final UserNotFoundException e) {
-        log.debug("404 Not found user - Страница не найдена {}", e.getMessage(), e);
-        return new ResponseEntity<>(
-                Map.of("Ошибка", e.getMessage()),
-                HttpStatus.NOT_FOUND
-        );
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleMpaNotFoundException(final MpaNotFoundException e) {
-        log.debug("404 Not found mpa - Страница не найдена {}", e.getMessage(), e);
-        return new ResponseEntity<>(
-                Map.of("Ошибка", e.getMessage()),
-                HttpStatus.NOT_FOUND
-        );
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleGenreNotFoundException(final GenreNotFoundException e) {
-        log.debug("404 Not found genre - Страница не найдена {}", e.getMessage(), e);
         return new ResponseEntity<>(
                 Map.of("Ошибка", e.getMessage()),
                 HttpStatus.NOT_FOUND
