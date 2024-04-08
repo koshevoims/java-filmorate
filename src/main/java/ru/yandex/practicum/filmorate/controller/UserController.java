@@ -1,74 +1,99 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import java.util.List;
+import java.util.*;
 
 @RestController
-@Component
-@AllArgsConstructor
 @Slf4j
-@Validated
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/users")
-    public List<User> getAll() {
-        log.info("Получить всех пользователей. Количество пользователей");
-        List<User> users = userService.getAll();
-        log.info("Возвращаем ответ. Количество пользователей: {}", users.size());
-        return users;
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping("/users/{id}") //TO DO - Validation ID
-    public User getId(@PathVariable @Positive Integer id) {
-        log.info("Получили пользователя по id. Пользователь id: {}", id);
-        User user = userService.getId(id);
-        log.info("Возвращаем ответ. Пользователь : {}", user);
+    @PostMapping()
+    public User addUser(@Valid @RequestBody User user) {
+        log.info("Добавление пользователя {}", user.getName());
+        userService.addUser(user);
+        log.info("Пользователь добавлен");
         return user;
     }
 
-    @PostMapping("/users")
-    public User create(@Valid @RequestBody User user) {
-        log.info("Создаем нового  пользователя {}", user);
-        User createdUser = userService.create(user);
-        log.info("Сохранили пользователя {}", createdUser);
-        return createdUser;
+    @PutMapping()
+    public User updateUser(@Valid @RequestBody User user) throws UserNotFoundException {
+        log.info("Обновление данных пользователя {}", user.getName());
+        userService.updateUser(user);
+        log.info("Данные пользователя обновлены");
+        return user;
     }
 
-    @PutMapping("/users")
-    public User change(@Valid @RequestBody User user) {
-        log.info("Изменить пользователя {}", user);
-        User savedUser = userService.change(user);
-        log.info("Изменить пользователя {}", savedUser);
-        return savedUser;
+    @GetMapping()
+    public List<User> getAllUsers() {
+        log.info("Запрос на получение списка всех пользователей");
+        List<User> users = userService.getAllUsers();
+        log.info("Список пользователей получен клиентом");
+        return users;
     }
 
-    @PutMapping("/users/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
-        return userService.addFriend(id, friendId);
+    @DeleteMapping()
+    public void deleteUser(long userId) {
+        log.info("Удаление пользователя с id: {}", userId);
+        userService.deleteUser(userId);
+        log.info("Пользователь удален");
     }
 
-    @DeleteMapping("/users/{id}/friends/{friendId}")
-    public User deleteFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
-        return userService.deleteFriend(id, friendId);
+    @GetMapping("/{userId}")
+    public User getUserById(@PathVariable long userId) throws UserNotFoundException {
+        log.info("Запрос на получение пользователя с id: {}", userId);
+        User user = userService.getUserById(userId);
+        log.info("Пользователь с указанным id получен клиентом");
+        return user;
     }
 
-    @GetMapping("/users/{id}/friends")
-    public List<User> getFriends(@PathVariable @Positive Long id) {
-        return userService.getFriends(id);
+    @PutMapping("/{userId}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void addFriend(@PathVariable Long userId,
+                          @PathVariable Long friendId) throws UserNotFoundException {
+        log.info("Пользователь {} добавляет в друзья {}", userId, friendId);
+        userService.getUserById(friendId);
+        userService.addFriend(userId, friendId);
+        log.info("Добавление в друзья произошло успешно");
     }
 
-    @GetMapping("/users/{id}/friends/common/{otherId}")
-    public List<User> getSharedFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long otherId) {
-        return userService.getSharedFriends(id, otherId);
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteFriend(@PathVariable Long userId,
+                             @PathVariable Long friendId) throws UserNotFoundException {
+        log.info("Запрос на удаление друга {} пользователем {}", friendId, userId);
+        userService.deleteFriend(userId, friendId);
+        log.info("Пользователь {} удален из списка друзей {}", friendId, userId);
+    }
+
+    @GetMapping("/{userId}/friends")
+    public List<User> getAllUsersFriends(@PathVariable Long userId) throws UserNotFoundException {
+        log.info("Запрашивается список друзей пользователя {}", userId);
+        List<User> users = userService.getUsersFriends(userId);
+        log.info("Список друзей пользователя {} получен", userId);
+        return users;
+    }
+
+    @GetMapping("/{userId}/friends/common/{friendId}")
+    public List<User> getMutualFriends(@PathVariable Long userId,
+                                       @PathVariable Long friendId) throws UserNotFoundException {
+        log.info("Запрос на получение списка общих друзей пользователей {} и {}", userId, friendId);
+        List<User> userList = userService.getMutualFriends(userId, friendId);
+        log.info("Список общих друзей пользователей {} и {} получен клиентом", friendId, userId);
+        return userList;
     }
 }

@@ -1,37 +1,44 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
+import ru.yandex.practicum.filmorate.validator.MinimumDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-/**
- * Film.
- */
-@Data
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+@ToString
 public class Film {
-    private long id;
-    @NotEmpty(message = "Name cannot be empty")
+    private Long id;
+    @NotBlank(message = "Name cannot be empty")
     private String name;
     @Size(max = 200, message = "Description must be less than 200 characters")
     private String description;
-    @PastOrPresent(message = "releaseDate cannot be in future")
+    @MinimumDate
     @NotNull(message = "releaseDate cannot be null")
     private LocalDate releaseDate;
     @Positive(message = "Duration cannot be negative")
-    private Integer duration;
+    private Long duration;
+    @NotNull
+    private RatingMpa mpa;
+    private LinkedHashSet<Genre> genres = new LinkedHashSet<>();
     @JsonIgnore
-    private Set<Long> likes;
-    private RatingMpa ratingMpa;
-    private final Set<Genre> genre;
+    private List<Long> likes;
 
-    public Film() {
-        this.likes = new HashSet<>();
-        this.genre = new HashSet<>();
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("FILM_TITLE", name);
+        values.put("FILM_DESCRIPTION", description);
+        values.put("FILM_RELEASE_DATE", releaseDate);
+        values.put("FILM_DURATION", duration);
+        values.put("FILM_MPA_ID", mpa.getId());
+        return values;
     }
 }
